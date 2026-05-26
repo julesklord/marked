@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Clean, warm amber branding backing card -->
+    <path
+        android:fillColor="#8F5A3C"
+        android:pathData="M30,22 h42 l16,16 v48 c0,4.4 -3.6,8 -8,8 H30 c-4.4,0 -8,-3.6 -8,-8 V30 c0,-4.4 3.6,-8 8,-8 z" />
+    <!-- Beautiful Paper Canvas inside -->
+    <path
+        android:fillColor="#FAF9F6"
+        android:pathData="M32,24 h38 l14,14 v42 c0,3.3 -2.7,6 -6,6 H32 c-3.3,0 -6,-2.7 -6,-6 V30 c0,-3.3 2.7,-6 6,-6 z" />
+    <!-- Fold corner detail -->
+    <path
+        android:fillColor="#EBE7DE"
+        android:pathData="M70,24 v14 h14 z" />
+    <!-- Markdown Styled Logo "M" and decorative banner -->
+    <path
+        android:fillColor="#1C1A17"
+        android:pathData="M40,31 h4 v8 l4,-4 l4,4 v-8 h4 v14 h-4 v-7 l-4,4 l-4,-4 v7 h-4 z" />
+    <!-- Grid-like notepad list indicators -->
+    <path
+        android:fillColor="#8F5A3C"
+        android:pathData="M36,52 h4 v4 H36 z M44,53 h28 v2 H44 z M36,62 h4 v4 H36 z M44,63 h28 v2 H44 z M36,72 h4 v4 H36 z M44,73 h28 v2 H44 z" />
+</vector>

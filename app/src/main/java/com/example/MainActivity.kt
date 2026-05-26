@@ -1,0 +1,1233 @@
+package com.example
+
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.animation.*
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.data.AppDatabase
+import com.example.data.MarkdownDocument
+import com.example.data.MarkdownRepository
+import com.example.ui.markdown.*
+import com.example.ui.viewmodel.MarkdownViewModel
+import com.example.ui.viewmodel.MarkdownViewModelFactory
+import kotlinx.coroutines.launch
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        val database = AppDatabase.getDatabase(applicationContext)
+        val repository = MarkdownRepository(database.markdownDao())
+        val viewModel: MarkdownViewModel by viewModels { MarkdownViewModelFactory(repository) }
+
+        setContent {
+            val systemInDark = isSystemInDarkTheme()
+
+            // Initialize theme preferences matching the phone's default system dark mode if not set yet
+            LaunchedEffect(systemInDark) {
+                viewModel.updatePreferences { prefs ->
+                    val defaultTheme = if (systemInDark) ReaderTheme.IMMERSIVE_UI else ReaderTheme.PAPELES
+                    prefs.copy(selectedTheme = defaultTheme)
+                }
+            }
+
+            val preferences by viewModel.readerPreferences.collectAsStateWithLifecycle()
+            val theme = preferences.selectedTheme
+            val bgColor = Color(theme.hexBackground)
+
+            // Dynamic layout scaffolding driven by selected reader themes
+            MaterialTheme(
+                colorScheme = if (theme.isDark) {
+                    darkColorScheme(
+                        primary = Color(theme.hexAccent),
+                        background = bgColor,
+                        surface = Color(theme.hexCodeBg)
+                    )
+                } else {
+                    lightColorScheme(
+                        primary = Color(theme.hexAccent),
+                        background = bgColor,
+                        surface = Color(theme.hexCodeBg)
+                    )
+                }
+            ) {
+                val containerModifier = if (theme == ReaderTheme.IMMERSIVE_UI) {
+                    Modifier
+                        .fillMaxSize()
+                        .background(
+                            androidx.compose.ui.graphics.Brush.verticalGradient(
+                                colors = listOf(Color(0xFF0F1113), Color(0xFF16181B))
+                            )
+                        )
+                } else {
+                    Modifier
+                        .fillMaxSize()
+                        .background(bgColor)
+                }
+                Box(modifier = containerModifier) {
+                    MainAppContent(viewModel = viewModel)
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainAppContent(viewModel: MarkdownViewModel) {
+    val documents by viewModel.allDocuments.collectAsStateWithLifecycle()
+    val selectedDoc by viewModel.selectedDocument.collectAsStateWithLifecycle()
+    val preferences by viewModel.readerPreferences.collectAsStateWithLifecycle()
+    val isEditMode by viewModel.isEditMode.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+
+    val scope = rememberCoroutineScope()
+    var isMobileSidebarOpen by remember { mutableStateOf(false) }
+    var showRenameDialog by remember { mutableStateOf<MarkdownDocument?>(null) }
+    var showDeleteDialog by remember { mutableStateOf<MarkdownDocument?>(null) }
+    var showCreateDialog by remember { mutableStateOf(false) }
+    var showSettingsSheet by remember { mutableStateOf(false) }
+
+    val theme = preferences.selectedTheme
+    val bgColor = Color(theme.hexBackground)
+    val fgColor = Color(theme.hexForeground)
+    val accentColor = Color(theme.hexAccent)
+
+    val listScrollState = rememberScrollState()
+
+    // Handle back button on mobile: if sidebar is open, close it, else if in edit mode, toggle back to reading mode
+    BackHandler(enabled = isMobileSidebarOpen || isEditMode) {
+        if (isMobileSidebarOpen) {
+            isMobileSidebarOpen = false
+        } else {
+            viewModel.setEditMode(false)
+        }
+    }
+
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val isTablet = maxWidth > 680.dp
+
+        Row(modifier = Modifier.fillMaxSize()) {
+            // Sidebar Panel: Always visible on tablet, drawer-slider overlay on mobile
+            if (isTablet) {
+                SidebarContent(
+                    documents = documents,
+                    selectedDoc = selectedDoc,
+                    searchQuery = searchQuery,
+                    theme = theme,
+                    preferences = preferences,
+                    onSearchChange = { viewModel.setSearchQuery(it) },
+                    onSelectDoc = {
+                        viewModel.selectDocument(it)
+                        viewModel.setEditMode(false)
+                    },
+                    onCreateNew = { showCreateDialog = true },
+                    onRename = { showRenameDialog = it },
+                    onDelete = { showDeleteDialog = it },
+                    modifier = Modifier
+                        .width(300.dp)
+                        .fillMaxHeight()
+                        .background(if (theme.isDark) bgColor.copy(alpha = 0.95f) else Color(theme.hexCodeBg))
+                        .border(
+                            BorderStroke(
+                                1.dp,
+                                if (theme.isDark) Color(theme.hexCodeBg) else Color(theme.hexQuoteBar).copy(alpha = 0.5f)
+                            )
+                        )
+                )
+            }
+
+            // Main View Area: Render reading or editing workspaces
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                // Top App Bar
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = selectedDoc?.title ?: "No seleccionado",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = TextStyle(
+                                fontFamily = preferences.selectedFont.fontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 19.sp,
+                                color = Color(theme.hexHeader)
+                            )
+                        )
+                    },
+                    navigationIcon = {
+                        if (!isTablet) {
+                            IconButton(
+                                onClick = { isMobileSidebarOpen = !isMobileSidebarOpen },
+                                modifier = Modifier.testTag("menu_sidebar_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Folder,
+                                    contentDescription = "Carpeta de notas",
+                                    tint = accentColor
+                                )
+                            }
+                        } else {
+                            IconButton(onClick = {}) {
+                                Icon(
+                                    imageVector = Icons.Default.MenuBook,
+                                    contentDescription = null,
+                                    tint = accentColor
+                                )
+                            }
+                        }
+                    },
+                    actions = {
+                        // Edit / Read Toggle Switch
+                        if (selectedDoc != null) {
+                            IconButton(
+                                onClick = { viewModel.setEditMode(!isEditMode) },
+                                modifier = Modifier.testTag("toggle_edit_mode_button")
+                            ) {
+                                Icon(
+                                    imageVector = if (isEditMode) Icons.Default.Book else Icons.Default.Edit,
+                                    contentDescription = if (isEditMode) "Modo Lectura" else "Modo Edición",
+                                    tint = accentColor
+                                )
+                            }
+                        }
+
+                        // Reading config settings
+                        IconButton(
+                            onClick = { showSettingsSheet = true },
+                            modifier = Modifier.testTag("configure_font_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.TextFormat,
+                                contentDescription = "Configuración de lectura",
+                                tint = fgColor.copy(alpha = 0.8f)
+                            )
+                        }
+
+                        // More Action options
+                        if (selectedDoc != null) {
+                            var showDropdown by remember { mutableStateOf(false) }
+                            Box {
+                                IconButton(onClick = { showDropdown = true }) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = "Opciones",
+                                        tint = fgColor.copy(alpha = 0.8f)
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = showDropdown,
+                                    onDismissRequest = { showDropdown = false },
+                                    modifier = Modifier.background(bgColor)
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Renombrar nota", color = fgColor) },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.DriveFileRenameOutline,
+                                                contentDescription = null,
+                                                tint = accentColor
+                                            )
+                                        },
+                                        onClick = {
+                                            showDropdown = false
+                                            showRenameDialog = selectedDoc
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Eliminar nota", color = MaterialTheme.colorScheme.error) },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                        },
+                                        onClick = {
+                                            showDropdown = false
+                                            showDeleteDialog = selectedDoc
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = if (theme.isDark) bgColor else Color(theme.hexCodeBg).copy(alpha = 0.15f),
+                        titleContentColor = Color(theme.hexHeader)
+                    ),
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
+                )
+
+                Divider(color = if (theme.isDark) Color(theme.hexCodeBg) else Color(theme.hexQuoteBar).copy(alpha = 0.3f))
+
+                // Workspace content body
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                ) {
+                    if (selectedDoc == null) {
+                        // Empty launch screen view
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(32.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Notes,
+                                contentDescription = "Vacío",
+                                tint = accentColor.copy(alpha = 0.3f),
+                                modifier = Modifier.size(96.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                "No hay ningún documento seleccionado",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = fgColor.copy(alpha = 0.8f)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                "¡Crea un nuevo documento o abre las plantillas de bienvenida!",
+                                fontSize = 14.sp,
+                                color = fgColor.copy(alpha = 0.5f),
+                                style = TextStyle(fontStyle = FontStyle.Italic)
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Button(
+                                onClick = { showCreateDialog = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Nuevo Documento", color = Color(theme.hexBackground))
+                            }
+                        }
+                    } else {
+                        val activeDoc = selectedDoc!!
+
+                        if (isEditMode) {
+                            // High Custom Markdown raw editor with fast editing shortcuts
+                            MarkdownEditorArea(
+                                document = activeDoc,
+                                preferences = preferences,
+                                onContentChange = { viewModel.updateDocumentContent(it) }
+                            )
+                        } else {
+                            // High Quality document reader
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                MarkdownRenderer(
+                                    content = activeDoc.content,
+                                    preferences = preferences,
+                                    onToggleChecklist = { lineIndex ->
+                                        viewModel.toggleChecklistItem(lineIndex)
+                                    }
+                                )
+                                Spacer(modifier = Modifier.height(64.dp)) // Floating back-layer space
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Mobile Sidebar Drawer Slider overlay
+        if (!isTablet && isMobileSidebarOpen) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.6f))
+                    .clickable { isMobileSidebarOpen = false }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .fillMaxHeight()
+                        .background(if (theme.isDark) bgColor else Color(theme.hexCodeBg))
+                        .clickable(enabled = false) {}
+                        .align(Alignment.CenterStart)
+                        .windowInsetsPadding(WindowInsets.navigationBars)
+                ) {
+                    SidebarContent(
+                        documents = documents,
+                        selectedDoc = selectedDoc,
+                        searchQuery = searchQuery,
+                        theme = theme,
+                        preferences = preferences,
+                        onSearchChange = { viewModel.setSearchQuery(it) },
+                        onSelectDoc = {
+                            viewModel.selectDocument(it)
+                            viewModel.setEditMode(false)
+                            isMobileSidebarOpen = false
+                        },
+                        onCreateNew = {
+                            showCreateDialog = true
+                            isMobileSidebarOpen = false
+                        },
+                        onRename = { showRenameDialog = it },
+                        onDelete = { showDeleteDialog = it },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
+
+        // Font Configuration Custom Controls Sheet (Tactile Dialog overlay to avoid sheet version bugs)
+        if (showSettingsSheet) {
+            AlertDialog(
+                onDismissRequest = { showSettingsSheet = false },
+                confirmButton = {
+                    TextButton(onClick = { showSettingsSheet = false }) {
+                        Text("Aceptar", color = accentColor, fontWeight = FontWeight.Bold)
+                    }
+                },
+                title = {
+                    Text(
+                        "Preferencias de Lectura",
+                        style = TextStyle(
+                            fontFamily = preferences.selectedFont.fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color(theme.hexHeader)
+                        )
+                    )
+                },
+                text = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        // Typography Selection Row
+                        Text(
+                            "Fuente Tipográfica:",
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = fgColor.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            ReaderFontFamily.values().forEach { font ->
+                                val selected = preferences.selectedFont == font
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(if (selected) accentColor else Color(theme.hexCodeBg))
+                                        .clickable {
+                                            viewModel.updatePreferences { it.copy(selectedFont = font) }
+                                        }
+                                        .border(
+                                            BorderStroke(
+                                                1.dp,
+                                                if (selected) accentColor else fgColor.copy(alpha = 0.2f)
+                                            ),
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(vertical = 8.dp, horizontal = 4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = font.displayName,
+                                        style = TextStyle(
+                                            fontFamily = font.fontFamily,
+                                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                            fontSize = 11.sp,
+                                            color = if (selected) Color(theme.hexBackground) else fgColor
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
+                        // Font size control with live slider
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "Tamaño de Fuente: (${preferences.fontSizeSp.toInt()}sp)",
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 14.sp,
+                                color = fgColor.copy(alpha = 0.7f)
+                            )
+                        }
+                        Slider(
+                            value = preferences.fontSizeSp,
+                            onValueChange = { size ->
+                                viewModel.updatePreferences { it.copy(fontSizeSp = size) }
+                            },
+                            valueRange = 14f..28f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = accentColor,
+                                activeTrackColor = accentColor,
+                                inactiveTrackColor = fgColor.copy(alpha = 0.2f)
+                            ),
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+
+                        // Line Spacing multipliers
+                        Text(
+                            "Espaciado de Línea:",
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = fgColor.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(top = 10.dp, bottom = 8.dp)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            listOf(
+                                Pair("Compacto", 1.2f),
+                                Pair("Estándar", 1.5f),
+                                Pair("Espacioso", 1.8f)
+                            ).forEach { pair ->
+                                val selected = preferences.lineSpacingMultiplier == pair.second
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(if (selected) accentColor else Color(theme.hexCodeBg))
+                                        .clickable {
+                                            viewModel.updatePreferences { it.copy(lineSpacingMultiplier = pair.second) }
+                                        }
+                                        .border(
+                                            BorderStroke(
+                                                1.dp,
+                                                if (selected) accentColor else fgColor.copy(alpha = 0.2f)
+                                            ),
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(vertical = 8.dp, horizontal = 4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = pair.first,
+                                        style = TextStyle(
+                                            fontSize = 12.sp,
+                                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                            color = if (selected) Color(theme.hexBackground) else fgColor
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
+                        // Theme Mode colors pallet
+                        Text(
+                            "Esquema de Color (Luz/Oscuro):",
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = fgColor.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            ReaderTheme.values().forEach { rt ->
+                                val selected = preferences.selectedTheme == rt
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable {
+                                            viewModel.updatePreferences { it.copy(selectedTheme = rt) }
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(44.dp)
+                                            .clip(CircleShape)
+                                            .background(Color(rt.hexBackground))
+                                            .border(
+                                                BorderStroke(
+                                                    if (selected) 2.dp else 1.dp,
+                                                    if (selected) accentColor else fgColor.copy(alpha = 0.2f)
+                                                ),
+                                                CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            "Ab",
+                                            color = Color(rt.hexForeground),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            fontFamily = preferences.selectedFont.fontFamily
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = rt.displayName,
+                                        fontSize = 10.sp,
+                                        maxLines = 1,
+                                        color = if (selected) accentColor else fgColor.copy(alpha = 0.6f),
+                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                }
+                            }
+                        }
+                    }
+                },
+                containerColor = bgColor,
+                modifier = Modifier.testTag("reading_preferences_dialog")
+            )
+        }
+
+        // Overlay dialog interfaces:
+        // CREATE NOTE DIALOG
+        if (showCreateDialog) {
+            var inputTitle by remember { mutableStateOf("") }
+            val focusRequester = remember { FocusRequester() }
+
+            AlertDialog(
+                onDismissRequest = { showCreateDialog = false },
+                title = { Text("Nuevo Documento Markdown", color = Color(theme.hexHeader)) },
+                text = {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            "Escribe un título para tu nota:",
+                            fontSize = 13.sp,
+                            color = fgColor.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        OutlinedTextField(
+                            value = inputTitle,
+                            onValueChange = { inputTitle = it },
+                            placeholder = { Text("Ej: Proyecto, Diario, Notas") },
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = fgColor,
+                                unfocusedTextColor = fgColor,
+                                focusedBorderColor = accentColor,
+                                unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
+                                .testTag("create_document_input")
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.createNewDocument(inputTitle.trim())
+                            showCreateDialog = false
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        modifier = Modifier.testTag("confirm_create_button")
+                    ) {
+                        Text("Crear", color = Color(theme.hexBackground))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showCreateDialog = false }) {
+                        Text("Cancelar", color = fgColor.copy(alpha = 0.6f))
+                    }
+                },
+                containerColor = bgColor
+            )
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+        }
+
+        // RENAME NOTE DIALOG
+        if (showRenameDialog != null) {
+            val docToRename = showRenameDialog!!
+            var inputTitle by remember { mutableStateOf(docToRename.title) }
+            val focusRequester = remember { FocusRequester() }
+
+            AlertDialog(
+                onDismissRequest = { showRenameDialog = null },
+                title = { Text("Renombrar Documento", color = Color(theme.hexHeader)) },
+                text = {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedTextField(
+                            value = inputTitle,
+                            onValueChange = { inputTitle = it },
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = fgColor,
+                                unfocusedTextColor = fgColor,
+                                focusedBorderColor = accentColor,
+                                unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
+                                .testTag("rename_document_input")
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.renameDocument(docToRename.id, inputTitle.trim())
+                            showRenameDialog = null
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        modifier = Modifier.testTag("confirm_rename_button")
+                    ) {
+                        Text("Guardar", color = Color(theme.hexBackground))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showRenameDialog = null }) {
+                        Text("Cancelar")
+                    }
+                },
+                containerColor = bgColor
+            )
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+        }
+
+        // CONFIRM DELETE DIALOG
+        if (showDeleteDialog != null) {
+            val docToDelete = showDeleteDialog!!
+
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = null },
+                title = { Text("¿Eliminar Nota?", color = MaterialTheme.colorScheme.error) },
+                text = {
+                    Text("Esta acción eliminará definitivamente la nota \"${docToDelete.title}\" de tu base de datos local y no se podrá deshacer.", color = fgColor)
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.deleteDocument(docToDelete)
+                            showDeleteDialog = null
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                        modifier = Modifier.testTag("confirm_delete_button")
+                    ) {
+                        Text("Eliminar", color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = null }) {
+                        Text("Regresar", color = fgColor.copy(alpha = 0.6f))
+                    }
+                },
+                containerColor = bgColor
+            )
+        }
+    }
+}
+
+@Composable
+fun SidebarContent(
+    documents: List<MarkdownDocument>,
+    selectedDoc: MarkdownDocument?,
+    searchQuery: String,
+    theme: ReaderTheme,
+    preferences: ReaderPreferences,
+    onSearchChange: (String) -> Unit,
+    onSelectDoc: (MarkdownDocument) -> Unit,
+    onCreateNew: () -> Unit,
+    onRename: (MarkdownDocument) -> Unit,
+    onDelete: (MarkdownDocument) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val accentColor = Color(theme.hexAccent)
+    val textBgColor = Color(theme.hexCodeBg)
+    val fgColor = Color(theme.hexForeground)
+
+    // Filter documents dynamically
+    val filteredDocs = remember(documents, searchQuery) {
+        if (searchQuery.isBlank()) {
+            documents
+        } else {
+            documents.filter {
+                it.title.contains(searchQuery, ignoreCase = true) ||
+                        it.content.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
+
+    Column(modifier = modifier.padding(12.dp)) {
+        // App Title branding and creator credits
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(accentColor),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "M",
+                    color = Color(theme.hexBackground),
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 18.sp
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    "Marked Reader",
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 17.sp,
+                    color = Color(theme.hexHeader),
+                    letterSpacing = 0.5.sp
+                )
+                Text(
+                    "Lector y editor ligero",
+                    fontSize = 10.sp,
+                    color = fgColor.copy(alpha = 0.5f)
+                )
+            }
+        }
+
+        // Search Bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchChange,
+            placeholder = { Text("Buscar notas...", fontSize = 12.sp, color = fgColor.copy(0.4f)) },
+            leadingIcon = { Icon(Icons.Default.Search, null, modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = fgColor,
+                unfocusedTextColor = fgColor,
+                focusedBorderColor = accentColor,
+                unfocusedBorderColor = fgColor.copy(0.15f),
+                focusedContainerColor = textBgColor.copy(alpha = 0.5f),
+                unfocusedContainerColor = textBgColor.copy(alpha = 0.5f)
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+                .testTag("document_search_field")
+        )
+
+        // List Header actions
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "DOCUMENTOS (${filteredDocs.size})",
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                color = fgColor.copy(alpha = 0.4f),
+                letterSpacing = 0.8.sp
+            )
+            IconButton(
+                onClick = onCreateNew,
+                modifier = Modifier
+                    .size(24.dp)
+                    .testTag("create_document_fab")
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AddCircle,
+                    contentDescription = "Crear Nuevo",
+                    tint = accentColor
+                )
+            }
+        }
+
+        // Document item List
+        if (filteredDocs.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "Archivos no encontrados",
+                    fontSize = 12.sp,
+                    color = fgColor.copy(alpha = 0.4f),
+                    fontStyle = FontStyle.Italic
+                )
+            }
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .testTag("document_list")
+            ) {
+                items(filteredDocs, key = { it.id }) { doc ->
+                    val isSelected = selectedDoc?.id == doc.id
+                    val wordCount = doc.content.split(Regex("\\s+")).filter { it.isNotBlank() }.size
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                if (isSelected) {
+                                    if (theme == ReaderTheme.IMMERSIVE_UI) Color(0xFF004786).copy(alpha = 0.8f) else accentColor.copy(alpha = 0.15f)
+                                } else Color.Transparent
+                            )
+                            .border(
+                                BorderStroke(
+                                    1.dp,
+                                    if (isSelected) {
+                                        if (theme == ReaderTheme.IMMERSIVE_UI) Color(0xFFD1E4FF).copy(alpha = 0.3f) else accentColor.copy(alpha = 0.3f)
+                                    } else Color.Transparent
+                                ),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable { onSelectDoc(doc) }
+                            .padding(horizontal = 10.dp, vertical = 10.dp)
+                            .testTag("document_item_${doc.id}")
+                    ) {
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = doc.title,
+                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                                    fontSize = 14.sp,
+                                    color = if (isSelected) {
+                                        if (theme == ReaderTheme.IMMERSIVE_UI) Color(0xFFD1E4FF) else accentColor
+                                    } else Color(theme.hexHeader),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f)
+                                )
+
+                                // Item secondary commands in sidebar
+                                Row {
+                                    IconButton(
+                                        onClick = { onRename(doc) },
+                                        modifier = Modifier.size(20.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.DriveFileRenameOutline,
+                                            contentDescription = "Renombrar",
+                                            tint = fgColor.copy(alpha = 0.3f),
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    IconButton(
+                                        onClick = { onDelete(doc) },
+                                        modifier = Modifier.size(20.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Borrar",
+                                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "$wordCount palabras",
+                                    fontSize = 11.sp,
+                                    color = if (isSelected && theme == ReaderTheme.IMMERSIVE_UI) Color(0xFFD1E4FF).copy(alpha = 0.7f) else fgColor.copy(alpha = 0.4f)
+                                )
+                                Text(
+                                    text = formatRelativeTime(doc.updatedAt),
+                                    fontSize = 10.sp,
+                                    color = if (isSelected && theme == ReaderTheme.IMMERSIVE_UI) Color(0xFF004786).copy(alpha = 0.0f).run { Color(0xFFD1E4FF).copy(alpha = 0.7f) } else fgColor.copy(alpha = 0.4f)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MarkdownEditorArea(
+    document: MarkdownDocument,
+    preferences: ReaderPreferences,
+    onContentChange: (String) -> Unit
+) {
+    val theme = preferences.selectedTheme
+    val bgColor = Color(theme.hexBackground)
+    val textBgColor = Color(theme.hexCodeBg)
+    val fgColor = Color(theme.hexForeground)
+    val accentColor = Color(theme.hexAccent)
+
+    // Using a stateful TextFieldValue to preserve cursor position when formatting
+    var textFieldValueState by remember(document.id) {
+        mutableStateOf(TextFieldValue(text = document.content, selection = TextRange(document.content.length)))
+    }
+
+    // Sync state text with DB updates from checklist or other updates safely
+    LaunchedEffect(document.content) {
+        if (textFieldValueState.text != document.content) {
+            textFieldValueState = textFieldValueState.copy(text = document.content)
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(bgColor)
+    ) {
+        // Raw Markdown input editor
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(16.dp)
+        ) {
+            BasicTextField(
+                value = textFieldValueState,
+                onValueChange = { newValue ->
+                    textFieldValueState = newValue
+                    onContentChange(newValue.text)
+                },
+                textStyle = TextStyle(
+                    fontFamily = preferences.selectedFont.fontFamily,
+                    fontSize = preferences.fontSizeSp.sp,
+                    color = fgColor,
+                    lineHeight = (preferences.fontSizeSp * 1.35f).sp
+                ),
+                cursorBrush = SolidColor(accentColor),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    autoCorrectEnabled = true,
+                    imeAction = ImeAction.Default
+                ),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("markdown_text_field"),
+                decorationBox = { innerTextField ->
+                    if (textFieldValueState.text.isEmpty()) {
+                        Text(
+                            "Comienza a escribir tu nota usando formato Markdown...",
+                            style = TextStyle(
+                                fontFamily = preferences.selectedFont.fontFamily,
+                                fontSize = preferences.fontSizeSp.sp,
+                                color = fgColor.copy(alpha = 0.35f),
+                                fontStyle = FontStyle.Italic
+                            )
+                        )
+                    }
+                    innerTextField()
+                }
+            )
+        }
+
+        // Horizontal Formatting Quick Helpers Bar centered above virtual keyboard
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(textBgColor)
+                .border(BorderStroke(1.dp, fgColor.copy(alpha = 0.1f)))
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            val insertFormatSymbol = { prefix: String, suffix: String ->
+                val selection = textFieldValueState.selection
+                val text = textFieldValueState.text
+                val selectedText = text.substring(selection.start, selection.end)
+                val replacement = "$prefix$selectedText$suffix"
+                val newText = text.replaceRange(selection.start, selection.end, replacement)
+                val newSelectionRange = TextRange(selection.start + prefix.length + selectedText.length + suffix.length)
+
+                textFieldValueState = TextFieldValue(text = newText, selection = newSelectionRange)
+                onContentChange(newText)
+            }
+
+            // Quick Format Buttons
+            FormatToolbarButton(
+                icon = Icons.Default.FormatBold,
+                label = "Negrita",
+                theme = theme,
+                onClick = { insertFormatSymbol("**", "**") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.FormatItalic,
+                label = "Itálica",
+                theme = theme,
+                onClick = { insertFormatSymbol("*", "*") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.Title,
+                label = "Título",
+                theme = theme,
+                onClick = { insertFormatSymbol("\n# ", "\n") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.Code,
+                label = "Código",
+                theme = theme,
+                onClick = { insertFormatSymbol("\n```kotlin\n", "\n```\n") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.FormatListBulleted,
+                label = "Ítem",
+                theme = theme,
+                onClick = { insertFormatSymbol("\n- ", "\n") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.FactCheck,
+                label = "Tarea",
+                theme = theme,
+                onClick = { insertFormatSymbol("\n- [ ] ", "\n") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.Link,
+                label = "Enlace",
+                theme = theme,
+                onClick = { insertFormatSymbol("[", "](https://)") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.FormatQuote,
+                label = "Cita",
+                theme = theme,
+                onClick = { insertFormatSymbol("\n> ", "\n") }
+            )
+            FormatToolbarButton(
+                icon = Icons.Default.HorizontalRule,
+                label = "Línea",
+                theme = theme,
+                onClick = { insertFormatSymbol("\n---\n", "") }
+            )
+        }
+    }
+}
+
+@Composable
+fun FormatToolbarButton(
+    imageVector: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    theme: ReaderTheme,
+    onClick: () -> Unit
+) {
+    val accentColor = Color(theme.hexAccent)
+    val fgColor = Color(theme.hexForeground)
+
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(theme.hexBackground),
+            contentColor = fgColor
+        ),
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, fgColor.copy(alpha = 0.15f)),
+        modifier = Modifier.height(34.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = accentColor,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            color = fgColor.copy(0.7f)
+        )
+    }
+}
+
+private fun formatRelativeTime(timestamp: Long): String {
+    val diff = System.currentTimeMillis() - timestamp
+    if (diff < 0) return "Ahora"
+    val sec = diff / 1000
+    if (sec < 60) return "Hace un momento"
+    val min = sec / 60
+    if (min < 60) return "Hace $min min"
+    val hr = min / 60
+    if (hr < 24) return "Hace $hr hr"
+    val days = hr / 24
+    if (days < 7) return "Hace $days días"
+    return java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(timestamp)
+}

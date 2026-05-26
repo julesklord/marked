@@ -1,0 +1,6 @@
+{
+  "name": "Marked",
+  "description": "Lector y editor ligero, práctico y elegante de documentos Markdown con modo oscuro y fuentes configurables.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

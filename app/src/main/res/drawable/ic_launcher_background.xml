@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gradient="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Sophisticated, warm editorial charcoal background gradient -->
+    <path android:pathData="M0,0 h108 v108 H0 z">
+        <gradient:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108"
+                android:type="linear">
+                <item android:color="#35302B" android:offset="0.0" />
+                <item android:color="#1C1A17" android:offset="1.0" />
+            </gradient>
+        </gradient:attr>
+    </path>
+    
+    <!-- Accent line structures for technical aesthetic -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,18 H108 M0,36 H108 M0,54 H108 M0,72 H108 M0,90 H108 M18,0 V108 M36,0 V108 M54,0 V108 M72,0 V108 M90,0 V108"
+        android:strokeWidth="0.5"
+        android:strokeColor="#18FFFFFF" />
+</vector>
