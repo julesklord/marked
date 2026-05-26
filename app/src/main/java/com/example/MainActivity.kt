@@ -129,6 +129,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
     val isEditMode by viewModel.isEditMode.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isMobileSidebarOpen by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf<MarkdownDocument?>(null) }
@@ -283,6 +284,38 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         onClick = {
                                             showDropdown = false
                                             showRenameDialog = selectedDoc
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Exportar como HTML", color = fgColor) },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Download,
+                                                contentDescription = null,
+                                                tint = accentColor
+                                            )
+                                        },
+                                        onClick = {
+                                            showDropdown = false
+                                            selectedDoc?.let { doc ->
+                                                com.example.ui.markdown.MarkdownExporter.exportHtml(context, doc, preferences)
+                                            }
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Exportar como PDF", color = fgColor) },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Print,
+                                                contentDescription = null,
+                                                tint = accentColor
+                                            )
+                                        },
+                                        onClick = {
+                                            showDropdown = false
+                                            selectedDoc?.let { doc ->
+                                                com.example.ui.markdown.MarkdownExporter.printPdf(context, doc, preferences)
+                                            }
                                         }
                                     )
                                     DropdownMenuItem(
@@ -1110,12 +1143,45 @@ fun MarkdownEditorArea(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             val insertFormatSymbol = { prefix: String, suffix: String ->
-                val selection = textFieldValueState.selection
                 val text = textFieldValueState.text
-                val selectedText = text.substring(selection.start, selection.end)
-                val replacement = "$prefix$selectedText$suffix"
-                val newText = text.replaceRange(selection.start, selection.end, replacement)
-                val newSelectionRange = TextRange(selection.start + prefix.length + selectedText.length + suffix.length)
+                val selection = textFieldValueState.selection
+                
+                // Secure bounds and direction-agnostic calculations
+                val start = minOf(selection.start, selection.end).coerceIn(0, text.length)
+                val end = maxOf(selection.start, selection.end).coerceIn(0, text.length)
+                val selectedText = text.substring(start, end)
+                
+                // Smart newline handling for line-level formats (like lists, headers, blockquotes, horizontal rules)
+                val isLineLevel = prefix.startsWith("\n") || suffix.startsWith("\n")
+                val needsStartNewline = isLineLevel && start > 0 && text[start - 1] != '\n'
+                val needsEndNewline = isLineLevel && end < text.length && text[end] != '\n'
+                
+                val cleanPrefix = if (isLineLevel) {
+                    val p = prefix.trimStart('\n')
+                    if (needsStartNewline) "\n$p" else p
+                } else {
+                    prefix
+                }
+                
+                val cleanSuffix = if (isLineLevel) {
+                    val s = suffix.trimEnd('\n')
+                    val padded = if (needsEndNewline) "$s\n" else s
+                    padded
+                } else {
+                    suffix
+                }
+                
+                val replacement = "$cleanPrefix$selectedText$cleanSuffix"
+                val newText = text.replaceRange(start, end, replacement)
+                
+                val newSelectionRange = if (selectedText.isEmpty()) {
+                    TextRange((start + cleanPrefix.length).coerceIn(0, newText.length))
+                } else {
+                    TextRange(
+                        start = (start + cleanPrefix.length).coerceIn(0, newText.length),
+                        end = (start + cleanPrefix.length + selectedText.length).coerceIn(0, newText.length)
+                    )
+                }
 
                 textFieldValueState = TextFieldValue(text = newText, selection = newSelectionRange)
                 onContentChange(newText)
