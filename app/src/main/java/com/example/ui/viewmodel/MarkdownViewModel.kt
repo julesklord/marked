@@ -6,10 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.MarkdownDocument
 import com.example.data.MarkdownRepository
 import com.example.ui.markdown.ReaderPreferences
+import com.example.ui.markdown.ReaderPreferencesStore
+import com.example.ui.markdown.ReaderTheme
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class MarkdownViewModel(private val repository: MarkdownRepository) : ViewModel() {
+class MarkdownViewModel(
+    private val repository: MarkdownRepository,
+    private val preferencesStore: ReaderPreferencesStore
+) : ViewModel() {
 
     val allDocuments: StateFlow<List<MarkdownDocument>> = repository.allDocuments
         .stateIn(
@@ -21,8 +26,12 @@ class MarkdownViewModel(private val repository: MarkdownRepository) : ViewModel(
     private val _selectedDocument = MutableStateFlow<MarkdownDocument?>(null)
     val selectedDocument: StateFlow<MarkdownDocument?> = _selectedDocument.asStateFlow()
 
-    private val _readerPreferences = MutableStateFlow(ReaderPreferences())
-    val readerPreferences: StateFlow<ReaderPreferences> = _readerPreferences.asStateFlow()
+    val readerPreferences: StateFlow<ReaderPreferences> = preferencesStore.preferencesFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ReaderPreferences()
+        )
 
     private val _isEditMode = MutableStateFlow(false)
     val isEditMode: StateFlow<Boolean> = _isEditMode.asStateFlow()
@@ -139,7 +148,23 @@ Usa esta lista de verificación interactiva para organizar tus planes de desarro
     }
 
     fun updatePreferences(update: (ReaderPreferences) -> ReaderPreferences) {
-        _readerPreferences.value = update(_readerPreferences.value)
+        viewModelScope.launch {
+            preferencesStore.save(update(readerPreferences.value))
+        }
+    }
+
+    /**
+     * On the very first launch (no preferences persisted yet) pick a sensible default theme based on
+     * the system dark mode. Once the user has any saved preference this is a no-op so their choice
+     * survives restarts.
+     */
+    fun applyDefaultThemeIfFirstLaunch(systemInDark: Boolean) {
+        viewModelScope.launch {
+            if (!preferencesStore.isInitializedFlow.first()) {
+                val defaultTheme = if (systemInDark) ReaderTheme.IMMERSIVE_UI else ReaderTheme.PAPELES
+                preferencesStore.save(readerPreferences.value.copy(selectedTheme = defaultTheme))
+            }
+        }
     }
 
     fun createNewDocument(title: String) {
@@ -226,11 +251,14 @@ Usa esta lista de verificación interactiva para organizar tus planes de desarro
     }
 }
 
-class MarkdownViewModelFactory(private val repository: MarkdownRepository) : ViewModelProvider.Factory {
+class MarkdownViewModelFactory(
+    private val repository: MarkdownRepository,
+    private val preferencesStore: ReaderPreferencesStore
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MarkdownViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return MarkdownViewModel(repository) as T
+            return MarkdownViewModel(repository, preferencesStore) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

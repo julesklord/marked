@@ -66,17 +66,15 @@ class MainActivity : ComponentActivity() {
 
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = MarkdownRepository(database.markdownDao())
-        val viewModel: MarkdownViewModel by viewModels { MarkdownViewModelFactory(repository) }
+        val preferencesStore = ReaderPreferencesStore(applicationContext)
+        val viewModel: MarkdownViewModel by viewModels { MarkdownViewModelFactory(repository, preferencesStore) }
 
         setContent {
             val systemInDark = isSystemInDarkTheme()
 
-            // Initialize theme preferences matching the phone's default system dark mode if not set yet
+            // Pick a default theme from the system dark mode only on first launch; saved choices persist.
             LaunchedEffect(systemInDark) {
-                viewModel.updatePreferences { prefs ->
-                    val defaultTheme = if (systemInDark) ReaderTheme.IMMERSIVE_UI else ReaderTheme.PAPELES
-                    prefs.copy(selectedTheme = defaultTheme)
-                }
+                viewModel.applyDefaultThemeIfFirstLaunch(systemInDark)
             }
 
             val preferences by viewModel.readerPreferences.collectAsStateWithLifecycle()
