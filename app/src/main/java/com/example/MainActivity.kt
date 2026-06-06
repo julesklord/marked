@@ -1,14 +1,11 @@
 package com.example
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.animation.*
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,12 +20,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.FactCheck
+import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +41,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -54,10 +53,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.AppDatabase
 import com.example.data.MarkdownDocument
 import com.example.data.MarkdownRepository
+import androidx.compose.ui.res.stringResource
 import com.example.ui.markdown.*
 import com.example.ui.viewmodel.MarkdownViewModel
 import com.example.ui.viewmodel.MarkdownViewModelFactory
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +66,7 @@ class MainActivity : ComponentActivity() {
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = MarkdownRepository(database.markdownDao())
         val preferencesStore = ReaderPreferencesStore(applicationContext)
-        val viewModel: MarkdownViewModel by viewModels { MarkdownViewModelFactory(repository, preferencesStore) }
+        val viewModel: MarkdownViewModel by viewModels { MarkdownViewModelFactory(repository, preferencesStore, applicationContext) }
 
         setContent {
             val systemInDark = isSystemInDarkTheme()
@@ -194,7 +193,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                 TopAppBar(
                     title = {
                         Text(
-                            text = selectedDoc?.title ?: "No seleccionado",
+                            text = selectedDoc?.title ?: stringResource(R.string.not_selected),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = TextStyle(
@@ -213,14 +212,14 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Folder,
-                                    contentDescription = "Carpeta de notas",
+                                    contentDescription = stringResource(R.string.folder_notes),
                                     tint = accentColor
                                 )
                             }
                         } else {
                             IconButton(onClick = {}) {
                                 Icon(
-                                    imageVector = Icons.Default.MenuBook,
+                                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
                                     contentDescription = null,
                                     tint = accentColor
                                 )
@@ -236,7 +235,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             ) {
                                 Icon(
                                     imageVector = if (isEditMode) Icons.Default.Book else Icons.Default.Edit,
-                                    contentDescription = if (isEditMode) "Modo Lectura" else "Modo Edición",
+                                    contentDescription = if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode),
                                     tint = accentColor
                                 )
                             }
@@ -249,7 +248,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.TextFormat,
-                                contentDescription = "Configuración de lectura",
+                                contentDescription = stringResource(R.string.pref_dialog_title),
                                 tint = fgColor.copy(alpha = 0.8f)
                             )
                         }
@@ -261,7 +260,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 IconButton(onClick = { showDropdown = true }) {
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
-                                        contentDescription = "Opciones",
+                                        contentDescription = stringResource(R.string.options),
                                         tint = fgColor.copy(alpha = 0.8f)
                                     )
                                 }
@@ -271,7 +270,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                     modifier = Modifier.background(bgColor)
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text("Renombrar nota", color = fgColor) },
+                                        text = { Text(stringResource(R.string.rename_note), color = fgColor) },
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.DriveFileRenameOutline,
@@ -285,7 +284,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Exportar como HTML", color = fgColor) },
+                                        text = { Text(stringResource(R.string.export_html), color = fgColor) },
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Download,
@@ -296,12 +295,12 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         onClick = {
                                             showDropdown = false
                                             selectedDoc?.let { doc ->
-                                                com.example.ui.markdown.MarkdownExporter.exportHtml(context, doc, preferences)
+                                                MarkdownExporter.exportHtml(context, doc, preferences)
                                             }
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Exportar como PDF", color = fgColor) },
+                                        text = { Text(stringResource(R.string.export_pdf), color = fgColor) },
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Print,
@@ -312,12 +311,12 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         onClick = {
                                             showDropdown = false
                                             selectedDoc?.let { doc ->
-                                                com.example.ui.markdown.MarkdownExporter.printPdf(context, doc, preferences)
+                                                MarkdownExporter.printPdf(context, doc, preferences)
                                             }
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Eliminar nota", color = MaterialTheme.colorScheme.error) },
+                                        text = { Text(stringResource(R.string.delete_note), color = MaterialTheme.colorScheme.error) },
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Delete,
@@ -341,7 +340,11 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                     modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
                 )
 
-                Divider(color = if (theme.isDark) Color(theme.hexCodeBg) else Color(theme.hexQuoteBar).copy(alpha = 0.3f))
+                HorizontalDivider(
+                    Modifier,
+                    DividerDefaults.Thickness,
+                    color = if (theme.isDark) Color(theme.hexCodeBg) else Color(theme.hexQuoteBar).copy(alpha = 0.3f)
+                )
 
                 // Workspace content body
                 Box(
@@ -359,21 +362,21 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Notes,
+                                imageVector = Icons.AutoMirrored.Filled.Notes,
                                 contentDescription = "Vacío",
                                 tint = accentColor.copy(alpha = 0.3f),
                                 modifier = Modifier.size(96.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                "No hay ningún documento seleccionado",
+                                stringResource(R.string.no_documents_selected),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
                                 color = fgColor.copy(alpha = 0.8f)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "¡Crea un nuevo documento o abre las plantillas de bienvenida!",
+                                stringResource(R.string.create_or_open_templates),
                                 fontSize = 14.sp,
                                 color = fgColor.copy(alpha = 0.5f),
                                 style = TextStyle(fontStyle = FontStyle.Italic)
@@ -385,7 +388,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             ) {
                                 Icon(Icons.Default.Add, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Nuevo Documento", color = Color(theme.hexBackground))
+                                Text(stringResource(R.string.new_document), color = Color(theme.hexBackground))
                             }
                         }
                     } else {
@@ -467,12 +470,12 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                 onDismissRequest = { showSettingsSheet = false },
                 confirmButton = {
                     TextButton(onClick = { showSettingsSheet = false }) {
-                        Text("Aceptar", color = accentColor, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.accept), color = accentColor, fontWeight = FontWeight.Bold)
                     }
                 },
                 title = {
                     Text(
-                        "Preferencias de Lectura",
+                        stringResource(R.string.pref_dialog_title),
                         style = TextStyle(
                             fontFamily = preferences.selectedFont.fontFamily,
                             fontWeight = FontWeight.Bold,
@@ -489,7 +492,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                     ) {
                         // Typography Selection Row
                         Text(
-                            "Fuente Tipográfica:",
+                            stringResource(R.string.pref_font_title),
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
                             color = fgColor.copy(alpha = 0.7f),
@@ -501,7 +504,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 .padding(bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            ReaderFontFamily.values().forEach { font ->
+                            ReaderFontFamily.entries.forEach { font ->
                                 val selected = preferences.selectedFont == font
                                 Box(
                                     modifier = Modifier
@@ -522,7 +525,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = font.displayName,
+                                        text = stringResource(font.displayNameResId),
                                         style = TextStyle(
                                             fontFamily = font.fontFamily,
                                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
@@ -541,7 +544,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "Tamaño de Fuente: (${preferences.fontSizeSp.toInt()}sp)",
+                                stringResource(R.string.pref_font_size, preferences.fontSizeSp.toInt()),
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 14.sp,
                                 color = fgColor.copy(alpha = 0.7f)
@@ -563,7 +566,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
 
                         // Line Spacing multipliers
                         Text(
-                            "Espaciado de Línea:",
+                            stringResource(R.string.pref_spacing_title),
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
                             color = fgColor.copy(alpha = 0.7f),
@@ -576,9 +579,9 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             listOf(
-                                Pair("Compacto", 1.2f),
-                                Pair("Estándar", 1.5f),
-                                Pair("Espacioso", 1.8f)
+                                Pair(stringResource(R.string.spacing_compact), 1.2f),
+                                Pair(stringResource(R.string.spacing_standard), 1.5f),
+                                Pair(stringResource(R.string.spacing_spacious), 1.8f)
                             ).forEach { pair ->
                                 val selected = preferences.lineSpacingMultiplier == pair.second
                                 Box(
@@ -613,7 +616,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
 
                         // Theme Mode colors pallet
                         Text(
-                            "Esquema de Color (Luz/Oscuro):",
+                            stringResource(R.string.pref_theme_title),
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
                             color = fgColor.copy(alpha = 0.7f),
@@ -623,7 +626,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            ReaderTheme.values().forEach { rt ->
+                            ReaderTheme.entries.forEach { rt ->
                                 val selected = preferences.selectedTheme == rt
                                 Column(
                                     modifier = Modifier
@@ -657,7 +660,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = rt.displayName,
+                                        text = stringResource(rt.displayNameResId),
                                         fontSize = 10.sp,
                                         maxLines = 1,
                                         color = if (selected) accentColor else fgColor.copy(alpha = 0.6f),
@@ -678,14 +681,13 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
         if (showCreateDialog) {
             var inputTitle by remember { mutableStateOf("") }
             val focusRequester = remember { FocusRequester() }
-
             AlertDialog(
                 onDismissRequest = { showCreateDialog = false },
-                title = { Text("Nuevo Documento Markdown", color = Color(theme.hexHeader)) },
+                title = { Text(stringResource(R.string.create_dialog_title), color = Color(theme.hexHeader)) },
                 text = {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "Escribe un título para tu nota:",
+                            stringResource(R.string.create_dialog_text),
                             fontSize = 13.sp,
                             color = fgColor.copy(alpha = 0.6f),
                             modifier = Modifier.padding(bottom = 8.dp)
@@ -693,7 +695,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         OutlinedTextField(
                             value = inputTitle,
                             onValueChange = { inputTitle = it },
-                            placeholder = { Text("Ej: Proyecto, Diario, Notas") },
+                            placeholder = { Text(stringResource(R.string.create_dialog_placeholder)) },
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = fgColor,
@@ -717,12 +719,12 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         colors = ButtonDefaults.buttonColors(containerColor = accentColor),
                         modifier = Modifier.testTag("confirm_create_button")
                     ) {
-                        Text("Crear", color = Color(theme.hexBackground))
+                        Text(stringResource(R.string.btn_create), color = Color(theme.hexBackground))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showCreateDialog = false }) {
-                        Text("Cancelar", color = fgColor.copy(alpha = 0.6f))
+                        Text(stringResource(R.string.btn_cancel), color = fgColor.copy(alpha = 0.6f))
                     }
                 },
                 containerColor = bgColor
@@ -737,10 +739,9 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
             val docToRename = showRenameDialog!!
             var inputTitle by remember { mutableStateOf(docToRename.title) }
             val focusRequester = remember { FocusRequester() }
-
             AlertDialog(
                 onDismissRequest = { showRenameDialog = null },
-                title = { Text("Renombrar Documento", color = Color(theme.hexHeader)) },
+                title = { Text(stringResource(R.string.rename_dialog_title), color = Color(theme.hexHeader)) },
                 text = {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         OutlinedTextField(
@@ -769,12 +770,12 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         colors = ButtonDefaults.buttonColors(containerColor = accentColor),
                         modifier = Modifier.testTag("confirm_rename_button")
                     ) {
-                        Text("Guardar", color = Color(theme.hexBackground))
+                        Text(stringResource(R.string.btn_save), color = Color(theme.hexBackground))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showRenameDialog = null }) {
-                        Text("Cancelar")
+                        Text(stringResource(R.string.btn_cancel))
                     }
                 },
                 containerColor = bgColor
@@ -787,12 +788,11 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
         // CONFIRM DELETE DIALOG
         if (showDeleteDialog != null) {
             val docToDelete = showDeleteDialog!!
-
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = null },
-                title = { Text("¿Eliminar Nota?", color = MaterialTheme.colorScheme.error) },
+                title = { Text(stringResource(R.string.delete_dialog_title), color = MaterialTheme.colorScheme.error) },
                 text = {
-                    Text("Esta acción eliminará definitivamente la nota \"${docToDelete.title}\" de tu base de datos local y no se podrá deshacer.", color = fgColor)
+                    Text(stringResource(R.string.delete_dialog_text, docToDelete.title), color = fgColor)
                 },
                 confirmButton = {
                     Button(
@@ -803,12 +803,12 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                         modifier = Modifier.testTag("confirm_delete_button")
                     ) {
-                        Text("Eliminar", color = Color.White)
+                        Text(stringResource(R.string.btn_delete), color = Color.White)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDeleteDialog = null }) {
-                        Text("Regresar", color = fgColor.copy(alpha = 0.6f))
+                        Text(stringResource(R.string.btn_back), color = fgColor.copy(alpha = 0.6f))
                     }
                 },
                 containerColor = bgColor
@@ -1211,13 +1211,13 @@ fun MarkdownEditorArea(
                 onClick = { insertFormatSymbol("\n```kotlin\n", "\n```\n") }
             )
             FormatToolbarButton(
-                icon = Icons.Default.FormatListBulleted,
+                icon = Icons.AutoMirrored.Filled.FormatListBulleted,
                 label = "Ítem",
                 theme = theme,
                 onClick = { insertFormatSymbol("\n- ", "\n") }
             )
             FormatToolbarButton(
-                icon = Icons.Default.FactCheck,
+                icon = Icons.AutoMirrored.Filled.FactCheck,
                 label = "Tarea",
                 theme = theme,
                 onClick = { insertFormatSymbol("\n- [ ] ", "\n") }

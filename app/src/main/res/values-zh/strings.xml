@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">Marked</string>
+    <string name="app_subtitle">轻量级阅读器与编辑器</string>
+    <string name="not_selected">未选择</string>
+    <string name="folder_notes">笔记文件夹</string>
+    <string name="read_mode">阅读模式</string>
+    <string name="edit_mode">编辑模式</string>
+    <string name="options">选项</string>
+    <string name="search_placeholder">搜索笔记...</string>
+    <string name="documents_header">文档 (%1$d)</string>
+    <string name="no_documents_selected">未选择文档</string>
+    <string name="create_or_open_templates">创建一个新文档或打开欢迎模板！</string>
+    <string name="new_document">新文档</string>
+    <string name="word_count">%1$d 字</string>
+    <string name="empty_document_msg">空文档。点击编辑开始写入。</string>
+    <string name="words_not_found">未找到笔记</string>
+
+    <string name="time_now">刚刚</string>
+    <string name="time_moment">刚才</string>
+    <string name="time_min">%1$d 分钟前</string>
+    <string name="time_hr">%1$d 小时前</string>
+    <string name="time_days">%1$d 天前</string>
+
+    <string name="rename_note">重命名笔记</string>
+    <string name="export_html">导出为 HTML</string>
+    <string name="export_pdf">导出为 PDF</string>
+    <string name="delete_note">删除笔记</string>
+    <string name="code_copied">代码已复制</string>
+    <string name="html_saved_downloads">文件已保存至下载目录：%1$s</string>
+    <string name="html_save_error">保存 HTML 出错：%1$s</string>
+    <string name="html_saved_cache">由于存储限制，已保存至应用缓存</string>
+    <string name="print_service_unavailable">此设备上打印服务不可用</string>
+    <string name="print_processing_error">处理打印出错：%1$s</string>
+    <string name="print_webview_unavailable">打印服务或 WebView 组件不可用</string>
+    <string name="share_html_title">分享 HTML 文档</string>
+    <string name="share_subject">导出的文档</string>
+    <string name="share_error">无法分享文件：%1$s</string>
+    <string name="cannot_create_downloads_file">无法在下载目录中创建文件</string>
+    <string name="exporter_updated_at">更新于：%1$s</string>
+
+    <string name="pref_dialog_title">阅读偏好设置</string>
+    <string name="pref_font_title">字体类型：</string>
+    <string name="pref_font_size">字体大小：(%1$dsp)</string>
+    <string name="pref_spacing_title">行间距：</string>
+    <string name="pref_theme_title">配色方案 (亮色/暗色)：</string>
+    <string name="spacing_compact">紧凑</string>
+    <string name="spacing_standard">标准</string>
+    <string name="spacing_spacious">宽敞</string>
+    <string name="accept">确定</string>
+
+    <string name="create_dialog_title">新建 Markdown 文档</string>
+    <string name="create_dialog_text">输入笔记的标题：</string>
+    <string name="create_dialog_placeholder">例如：项目、日记、笔记</string>
+    <string name="btn_create">创建</string>
+    <string name="btn_cancel">取消</string>
+    <string name="rename_dialog_title">重命名文档</string>
+    <string name="btn_save">保存</string>
+    <string name="delete_dialog_title">删除笔记吗？</string>
+    <string name="delete_dialog_text">此操作将永久从您的本地数据库中删除笔记“%1$s”，且无法撤销。</string>
+    <string name="btn_delete">删除</string>
+    <string name="btn_back">返回</string>
+    <string name="untitled_doc">无标题</string>
+    <string name="editor_placeholder">开始使用 Markdown 格式编写笔记...</string>
+
+    <string name="tb_bold">粗体</string>
+    <string name="tb_italic">斜体</string>
+    <string name="tb_title">标题</string>
+    <string name="tb_code">代码</string>
+    <string name="tb_item">列表项</string>
+    <string name="tb_task">任务</string>
+    <string name="tb_link">链接</string>
+    <string name="tb_quote">引用</string>
+    <string name="tb_line">分隔线</string>
+
+    <string name="template_welcome_title">欢迎使用 Marked！📑</string>
+    <string name="template_welcome_content"># 欢迎使用 Marked！📑\n\n**Marked** 是一款专为 Android 设计的高性能、轻量级 Markdown 编辑器和阅读器。在这里，您可以创建、整理和阅读您的 **Markdown** 格式笔记，享受高水准的排版与阅读体验。\n\n### 主要功能：\n- ⚡ **高质量阅读器**：在所有设备上都能实现极致的响应式和无瑕的排版渲染。\n- 🎨 **可配置字体**：随时调整字体大小、行间距和字体类型。\n- 🌓 **原生暗色模式**：提供多种精心调配的主题（纸张、暖沙、碳黑或纯黑）来保护您的视力。\n- ☑️ **交互式任务列表**：直接在阅读视图中点击复选框来勾选完成任务。\n\n> 您可以通过滑动或点击文件夹图标来展开侧边栏，新建或重命名您的笔记。\n\n---\nMarked 开发团队倾情打造。</string>
+
+    <string name="template_syntax_title">语法指南 🖋️</string>
+    <string name="template_syntax_content"># Markdown 语法指南 🖋️\n\n本篇笔记将帮助您探索高质量阅读器所支持的丰富排版格式。\n\n## 标题\n您可以使用 1 到 4 级的标题：\n### 3 级标题（非常优雅）\n#### 4 级标题（紧凑而美观）\n\n---\n\n## 文本格式化\n- 您可以使用 **粗体** 来强调核心观点。\n- 使用 *斜体* 来突出字词。\n- 也可以使用 `行内代码` 来标记变量或简短标签。\n- 或者添加超链接，例如 [Google](https://google.com)。\n\n---\n\n## 引用与思考\n> \"好的设计体现在字体和排版间距的每一个细节之中。\" —— 设计团队\n\n---\n\n## 代码块\n下面是 Kotlin 代码示例：\n```kotlin\nfun main() {\n    println(\"Hello from Marked!\")\n}\n```</string>
+
+    <string name="template_tasks_title">我的任务 🚀</string>
+    <string name="template_tasks_content"># 项目：新应用开发 🚀\n\n使用这个交互式任务列表来规划您的开发进度。您可以直接在阅读器中点击复选框，文档会自动保存并更新！\n\n## 设计任务\n- [x] 选择一款优雅的阅读字体\n- [x] 配置暗色模式和背景主题（纸张与暖沙）\n- [ ] 精细调整 Material 3 阴影和边框\n\n## 编码任务\n- [x] 配置 Room 本地数据库\n- [ ] 实现带有格式化工具栏的交互式文本编辑器\n- [ ] 为代码块添加“复制到剪贴板”按钮</string>
+    <string name="font_sans">现代无衬线体</string>
+    <string name="font_serif">经典衬线体</string>
+    <string name="font_monospace">系统等宽体</string>
+
+    <string name="theme_immersive">沉浸式 🌌</string>
+    <string name="theme_paper">浅雅纸张</string>
+    <string name="theme_sepia">温润暖沙</string>
+    <string name="theme_charcoal">经典碳黑</string>
+    <string name="theme_black">纯黑之境</string>
+</resources>

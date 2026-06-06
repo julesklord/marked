@@ -1,12 +1,14 @@
 package com.example.ui.markdown
 
-import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
@@ -16,6 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.R
+import com.example.ui.theme.MyApplicationTheme
+
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -35,8 +43,8 @@ import androidx.compose.ui.unit.sp
 fun MarkdownRenderer(
     content: String,
     preferences: ReaderPreferences,
-    onToggleChecklist: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onToggleChecklist: (Int) -> Unit
 ) {
     val blocks = MarkdownParser.parse(content)
     val context = LocalContext.current
@@ -77,7 +85,7 @@ fun MarkdownRenderer(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Documento vacío. Haz click en Editar para escribir.",
+                    text = stringResource(R.string.empty_document_msg),
                     style = TextStyle(
                         fontFamily = preferences.selectedFont.fontFamily,
                         fontSize = preferences.fontSizeSp.sp,
@@ -99,32 +107,56 @@ fun MarkdownRenderer(
                     }
                     val weight = if (block.level <= 3) FontWeight.Bold else FontWeight.Medium
                     val topPadding = when (block.level) {
-                        1 -> 20.dp
-                        2 -> 16.dp
-                        else -> 12.dp
+                        1 -> 22.dp
+                        2 -> 18.dp
+                        else -> 14.dp
                     }
 
-                    Column(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = topPadding, bottom = 8.dp)
+                            .padding(top = topPadding, bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = parseInlineText(block.text, codeBgColor, accentColor),
-                            style = TextStyle(
-                                fontFamily = preferences.selectedFont.fontFamily,
-                                fontSize = (preferences.fontSizeSp * scale).sp,
-                                fontWeight = weight,
-                                color = headerColor,
-                                lineHeight = (preferences.fontSizeSp * scale * 1.3f).sp
+                        if (block.level == 2) {
+                            Box(
+                                modifier = Modifier
+                                    .width(4.dp)
+                                    .height(20.dp)
+                                    .clip(RoundedCornerShape(2.dp))
+                                    .background(accentColor)
                             )
-                        )
-                        if (block.level == 1) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
-                                thickness = 2.dp,
-                                color = accentColor.copy(alpha = 0.4f)
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = parseInlineText(block.text, codeBgColor, accentColor),
+                                style = TextStyle(
+                                    fontFamily = preferences.selectedFont.fontFamily,
+                                    fontSize = (preferences.fontSizeSp * scale).sp,
+                                    fontWeight = weight,
+                                    color = headerColor,
+                                    lineHeight = (preferences.fontSizeSp * scale * 1.35f).sp,
+                                    letterSpacing = if (block.level == 1) 0.25.sp else 0.sp
+                                )
                             )
+                            if (block.level == 1) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.7f)
+                                        .height(3.dp)
+                                        .padding(top = 8.dp)
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                colors = listOf(
+                                                    accentColor,
+                                                    accentColor.copy(alpha = 0.3f),
+                                                    Color.Transparent
+                                                )
+                                            )
+                                        )
+                                )
+                            }
                         }
                     }
                 }
@@ -157,14 +189,12 @@ fun MarkdownRenderer(
                                     .padding(vertical = 4.dp),
                                 verticalAlignment = Alignment.Top
                             ) {
-                                Text(
-                                    text = "•",
-                                    style = TextStyle(
-                                        fontSize = (preferences.fontSizeSp * 1.1f).sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = accentColor
-                                    ),
-                                    modifier = Modifier.padding(end = 10.dp, start = 4.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .padding(top = (preferences.fontSizeSp * 0.45f).dp, end = 12.dp, start = 6.dp)
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(accentColor)
                                 )
                                 Text(
                                     text = parseInlineText(itemText, codeBgColor, accentColor),
@@ -232,8 +262,9 @@ fun MarkdownRenderer(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
                                     .clickable { onToggleChecklist(item.lineIndex) }
-                                    .padding(vertical = 4.dp),
+                                    .padding(horizontal = 6.dp, vertical = 2.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Checkbox(
@@ -243,7 +274,7 @@ fun MarkdownRenderer(
                                         checkedColor = accentColor,
                                         checkmarkColor = bgColor
                                     ),
-                                    modifier = Modifier.size(40.dp)
+                                    modifier = Modifier.size(36.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
@@ -263,34 +294,68 @@ fun MarkdownRenderer(
                 }
 
                 is MarkdownBlock.Quote -> {
-                    Row(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 12.dp)
-                            .height(IntrinsicSize.Min)
-                            .clip(RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp))
-                            .background(quoteBarColor.copy(alpha = 0.3f))
+                            .clip(RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(
+                                        quoteBarColor.copy(alpha = 0.25f),
+                                        quoteBarColor.copy(alpha = 0.08f)
+                                    )
+                                )
+                            )
+                            .border(
+                                width = 1.dp,
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        accentColor.copy(alpha = 0.15f),
+                                        Color.Transparent
+                                    )
+                                ),
+                                shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
+                            )
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(4.dp)
-                                .background(accentColor)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = parseInlineText(block.text, codeBgColor, accentColor),
+                            text = "“",
                             style = TextStyle(
-                                fontFamily = preferences.selectedFont.fontFamily,
-                                fontSize = preferences.fontSizeSp.sp,
-                                color = fgColor.copy(alpha = 0.95f),
-                                fontStyle = FontStyle.Italic,
-                                lineHeight = (preferences.fontSizeSp * preferences.lineSpacingMultiplier).sp
+                                fontSize = 90.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = accentColor.copy(alpha = 0.08f),
+                                lineHeight = 0.sp
                             ),
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 8.dp, end = 12.dp)
+                                .align(Alignment.TopStart)
+                                .offset(x = 6.dp, y = (-20).dp)
                         )
+
+                        Row(
+                            modifier = Modifier.height(IntrinsicSize.Min)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width(4.dp)
+                                    .clip(RoundedCornerShape(topStart = 2.dp, bottomStart = 2.dp))
+                                    .background(accentColor)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = parseInlineText(block.text, codeBgColor, accentColor),
+                                style = TextStyle(
+                                    fontFamily = preferences.selectedFont.fontFamily,
+                                    fontSize = preferences.fontSizeSp.sp,
+                                    color = fgColor.copy(alpha = 0.95f),
+                                    fontStyle = FontStyle.Italic,
+                                    lineHeight = (preferences.fontSizeSp * preferences.lineSpacingMultiplier).sp
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp, bottom = 12.dp, end = 16.dp)
+                            )
+                        }
                     }
                 }
 
@@ -298,39 +363,49 @@ fun MarkdownRenderer(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 10.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(codeBgColor)
+                            .padding(vertical = 12.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF1E222A))
+                            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.05f)), RoundedCornerShape(12.dp))
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(codeBgColor.copy(alpha = 0.6f))
-                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                                .background(Color(0xFF1E222A))
+                                .padding(horizontal = 14.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = block.language.ifEmpty { "CODE" }.uppercase(),
-                                style = TextStyle(
-                                    fontFamily = FontFamily.Monospace,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = fgColor.copy(alpha = 0.5f)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(Color(0xFFFF5F56)))
+                                Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(Color(0xFFFFBD2E)))
+                                Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(Color(0xFF27C93F)))
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = block.language.ifEmpty { "CODE" }.uppercase(),
+                                    style = TextStyle(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFABB2BF).copy(alpha = 0.6f)
+                                    )
                                 )
-                            )
+                            }
                             IconButton(
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(block.code))
-                                    Toast.makeText(context, "Código copiado", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.code_copied), Toast.LENGTH_SHORT).show()
                                 },
-                                modifier = Modifier.size(28.dp)
+                                modifier = Modifier.size(24.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.ContentCopy,
                                     contentDescription = "Copiar Código",
                                     tint = accentColor,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(14.dp)
                                 )
                             }
                         }
@@ -340,14 +415,14 @@ fun MarkdownRenderer(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .horizontalScroll(rememberScrollState())
-                                    .padding(12.dp)
+                                    .padding(14.dp)
                             ) {
                                 Text(
-                                    text = highlightCode(block.code, theme, fgColor),
+                                    text = highlightCode(block.code),
                                     style = TextStyle(
                                         fontFamily = FontFamily.Monospace,
                                         fontSize = (preferences.fontSizeSp * 0.9f).sp,
-                                        lineHeight = (preferences.fontSizeSp * 1.2f).sp
+                                        lineHeight = (preferences.fontSizeSp * 1.25f).sp
                                     )
                                 )
                             }
@@ -356,11 +431,33 @@ fun MarkdownRenderer(
                 }
 
                 is MarkdownBlock.Divider -> {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 16.dp),
-                        thickness = 1.dp,
-                        color = quoteBarColor.copy(alpha = 0.4f)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .height(1.dp)
+                                .background(
+                                    Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            quoteBarColor.copy(alpha = 0.4f),
+                                            Color.Transparent
+                                        )
+                                    )
+                                )
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .rotate(45f)
+                                .background(accentColor.copy(alpha = 0.7f))
+                        )
+                    }
                 }
             }
         }
@@ -456,23 +553,35 @@ fun parseInlineText(
     }
 }
 
-fun highlightCode(code: String, theme: ReaderTheme, fallbackColor: Color): AnnotatedString {
-    if (!theme.isDark) {
-        return AnnotatedString(code)
-    }
+fun highlightCode(code: String): AnnotatedString {
+    val keywords = setOf(
+        "fun", "function", "val", "var", "class", "import", "return", "package", 
+        "override", "let", "const", "if", "else", "when", "for", "while", 
+        "try", "catch", "finally", "throw", "null", "true", "false", 
+        "this", "super", "interface", "object", "private", "protected", 
+        "public", "internal", "enum", "sealed", "data", "suspend", "is", "as"
+    )
+    val types = setOf(
+        "String", "Int", "Boolean", "Float", "Double", "Long", "Char", "Byte", 
+        "Short", "Any", "Unit", "Nothing", "List", "Map", "Set", "StateFlow", 
+        "Flow", "MutableStateFlow", "State", "ViewModel", "Context", "Modifier"
+    )
+
     return buildAnnotatedString {
-        val keywords = setOf("fun", "function", "val", "var", "class", "import", "return", "package", "override", "let", "const")
         val lines = code.split("\n")
         lines.forEachIndexed { lineIdx, line ->
             var i = 0
             val len = line.length
             while (i < len) {
+                // Comments
                 if (line.startsWith("//", i) || line.startsWith("#", i)) {
-                    pushStyle(SpanStyle(color = Color(0xFF9E9E9E)))
+                    pushStyle(SpanStyle(color = Color(0xFF7F848E), fontStyle = FontStyle.Italic))
                     append(line.substring(i))
                     pop()
                     break
-                } else if (line[i] == '"' || line[i] == '\'') {
+                }
+                // Strings
+                else if (line[i] == '"' || line[i] == '\'') {
                     val quote = line[i]
                     var end = i + 1
                     while (end < len && line[end] != quote) {
@@ -483,28 +592,62 @@ fun highlightCode(code: String, theme: ReaderTheme, fallbackColor: Color): Annot
                         }
                     }
                     if (end < len) end++
-                    pushStyle(SpanStyle(color = Color(0xFFD1B26F)))
+                    pushStyle(SpanStyle(color = Color(0xFF98C379)))
                     append(line.substring(i, end))
                     pop()
                     i = end
-                } else if (line[i].isLetter()) {
+                }
+                // Annotations starting with @
+                else if (line[i] == '@') {
+                    var end = i + 1
+                    while (end < len && (line[end].isLetterOrDigit() || line[end] == '_')) {
+                        end++
+                    }
+                    pushStyle(SpanStyle(color = Color(0xFFE5C07B)))
+                    append(line.substring(i, end))
+                    pop()
+                    i = end
+                }
+                // Numbers
+                else if (line[i].isDigit()) {
+                    var end = i
+                    while (end < len && (line[end].isLetterOrDigit() || line[end] == '.')) {
+                        end++
+                    }
+                    pushStyle(SpanStyle(color = Color(0xFFD19A66)))
+                    append(line.substring(i, end))
+                    pop()
+                    i = end
+                }
+                // Words (Keywords, Types, identifiers)
+                else if (line[i].isLetter()) {
                     var end = i
                     while (end < len && (line[end].isLetterOrDigit() || line[end] == '_')) {
                         end++
                     }
                     val word = line.substring(i, end)
-                    if (word in keywords) {
-                        pushStyle(SpanStyle(color = Color(0xFF7DBA84), fontWeight = FontWeight.Bold))
-                        append(word)
-                        pop()
-                    } else {
-                        pushStyle(SpanStyle(color = fallbackColor))
-                        append(word)
-                        pop()
+                    when {
+                        word in keywords -> {
+                            pushStyle(SpanStyle(color = Color(0xFFC678DD), fontWeight = FontWeight.Bold))
+                            append(word)
+                            pop()
+                        }
+                        word in types -> {
+                            pushStyle(SpanStyle(color = Color(0xFF61AFEF)))
+                            append(word)
+                            pop()
+                        }
+                        else -> {
+                            pushStyle(SpanStyle(color = Color(0xFFABB2BF)))
+                            append(word)
+                            pop()
+                        }
                     }
                     i = end
-                } else {
-                    pushStyle(SpanStyle(color = fallbackColor.copy(alpha = 0.8f)))
+                }
+                // Other characters
+                else {
+                    pushStyle(SpanStyle(color = Color(0xFFABB2BF).copy(alpha = 0.8f)))
                     append(line[i].toString())
                     pop()
                     i++
@@ -513,6 +656,60 @@ fun highlightCode(code: String, theme: ReaderTheme, fallbackColor: Color): Annot
             if (lineIdx < lines.lastIndex) {
                 append("\n")
             }
+        }
+    }
+}
+
+private const val SAMPLE_MARKDOWN = """
+# Heading 1
+## Heading 2
+This is a **bold** and *italic* paragraph with `inline code` and a [link](https://example.com).
+
+- Item 1
+- Item 2
+
+1. First
+2. Second
+
+- [ ] Unchecked task
+- [x] Checked task
+
+> This is a blockquote.
+> It can span multiple lines.
+
+```kotlin
+fun main() {
+    println("Hello, World!")
+}
+```
+
+---
+"""
+
+@Preview(showBackground = true, name = "Light Theme")
+@Composable
+fun PreviewMarkdownRendererLight() {
+    MyApplicationTheme(darkTheme = false) {
+        Surface {
+            MarkdownRenderer(
+                content = SAMPLE_MARKDOWN,
+                preferences = ReaderPreferences(selectedTheme = ReaderTheme.PAPELES),
+                onToggleChecklist = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Dark Theme")
+@Composable
+fun PreviewMarkdownRendererDark() {
+    MyApplicationTheme(darkTheme = true) {
+        Surface {
+            MarkdownRenderer(
+                content = SAMPLE_MARKDOWN,
+                preferences = ReaderPreferences(selectedTheme = ReaderTheme.IMMERSIVE_UI),
+                onToggleChecklist = {}
+            )
         }
     }
 }

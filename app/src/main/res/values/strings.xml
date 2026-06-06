@@ -1,3 +1,92 @@
 <resources>
     <string name="app_name">Marked</string>
+    <string name="app_subtitle">Lightweight reader and editor</string>
+    <string name="not_selected">Not selected</string>
+    <string name="folder_notes">Notes Folder</string>
+    <string name="read_mode">Reading Mode</string>
+    <string name="edit_mode">Editing Mode</string>
+    <string name="options">Options</string>
+    <string name="search_placeholder">Search notes...</string>
+    <string name="documents_header">DOCUMENTS (%1$d)</string>
+    <string name="no_documents_selected">No document selected</string>
+    <string name="create_or_open_templates">Create a new document or open the welcome templates!</string>
+    <string name="new_document">New Document</string>
+    <string name="word_count">%1$d words</string>
+    <string name="empty_document_msg">Empty document. Click Edit to write.</string>
+    <string name="words_not_found">No notes found</string>
+
+    <string name="time_now">Now</string>
+    <string name="time_moment">Just now</string>
+    <string name="time_min">%1$d min ago</string>
+    <string name="time_hr">%1$d hr ago</string>
+    <string name="time_days">%1$d days ago</string>
+
+    <string name="rename_note">Rename note</string>
+    <string name="export_html">Export as HTML</string>
+    <string name="export_pdf">Export as PDF</string>
+    <string name="delete_note">Delete note</string>
+    <string name="code_copied">Code copied</string>
+    <string name="html_saved_downloads">File saved to Downloads: %1$s</string>
+    <string name="html_save_error">Error saving HTML: %1$s</string>
+    <string name="html_saved_cache">Saved to app cache due to storage restrictions</string>
+    <string name="print_service_unavailable">Print service is unavailable on this device</string>
+    <string name="print_processing_error">Error processing print: %1$s</string>
+    <string name="print_webview_unavailable">Print service or WebView component is unavailable</string>
+    <string name="share_html_title">Share HTML Document</string>
+    <string name="share_subject">Exported Document</string>
+    <string name="share_error">Could not share file: %1$s</string>
+    <string name="cannot_create_downloads_file">Could not create file in Downloads</string>
+    <string name="exporter_updated_at">Updated: %1$s</string>
+
+    <string name="pref_dialog_title">Reading Preferences</string>
+    <string name="pref_font_title">Typography Font:</string>
+    <string name="pref_font_size">Font Size: (%1$dsp)</string>
+    <string name="pref_spacing_title">Line Spacing:</string>
+    <string name="pref_theme_title">Color Theme (Light/Dark):</string>
+    <string name="spacing_compact">Compact</string>
+    <string name="spacing_standard">Standard</string>
+    <string name="spacing_spacious">Spacious</string>
+    <string name="accept">Accept</string>
+
+    <string name="create_dialog_title">New Markdown Document</string>
+    <string name="create_dialog_text">Enter a title for your note:</string>
+    <string name="create_dialog_placeholder">e.g., Project, Diary, Notes</string>
+    <string name="btn_create">Create</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="rename_dialog_title">Rename Document</string>
+    <string name="btn_save">Save</string>
+    <string name="delete_dialog_title">Delete Note?</string>
+    <string name="delete_dialog_text">This action will permanently delete the note \"%1$s\" from your local database and cannot be undone.</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_back">Back</string>
+    <string name="untitled_doc">Untitled</string>
+    <string name="editor_placeholder">Start writing your note using Markdown format...</string>
+
+    <string name="tb_bold">Bold</string>
+    <string name="tb_italic">Italic</string>
+    <string name="tb_title">Title</string>
+    <string name="tb_code">Code</string>
+    <string name="tb_item">Item</string>
+    <string name="tb_task">Task</string>
+    <string name="tb_link">Link</string>
+    <string name="tb_quote">Quote</string>
+    <string name="tb_line">Line</string>
+
+    <string name="template_welcome_title">Welcome to Marked! 📑</string>
+    <string name="template_welcome_content"># Welcome to Marked! 📑\n\n**Marked** is a high-performance, lightweight Markdown editor and reader designed exclusively for Android. Here you can create, organize, and read your notes in **Markdown** format with a high-standard typographical experience.\n\n### Main Features:\n- ⚡ **High Quality Reader**: Responsive and flawless rendering across all devices.\n- 🎨 **Configurable Fonts**: Instantly adjust font size, line spacing, and typography style.\n- 🌓 **Native Dark Mode**: Choose from various curated themes (Papel, Sepia, Charcoal, or Pitch Black) to protect your eyes.\n- ☑️ **Interactive Task Lists**: Tap checkboxes directly from the reader view to check off tasks.\n\n> Open the sidebar by swiping or tapping the folder button to create or rename notes.\n\n---\nCreated with love by the Marked Team.</string>
+
+    <string name="template_syntax_title">Syntax Guide 🖋️</string>
+    <string name="template_syntax_content"># Markdown Syntax Guide 🖋️\n\nThis note helps you explore the rich formatting options supported by our high-quality reader.\n\n## Headers\nYou can use headers from level 1 to level 4:\n### Level 3 Header (Very elegant)\n#### Level 4 Header (Compact and beautiful)\n\n---\n\n## Text Formatting\n- You can write in **bold** to highlight important ideas.\n- You can write in *italic* for emphasis.\n- You can use `inline code` for variables or short tags.\n- Or add hyperlinks like [Google](https://google.com).\n\n---\n\n## Quotes and Thoughts\n> \"Good design is visible in the details of typography and spacing.\" — Design Team\n\n---\n\n## Code Blocks\nHere is an example of code in Kotlin:\n```kotlin\nfun main() {\n    println(\"Hello from Marked!\")\n}\n```</string>
+
+    <string name="template_tasks_title">My Tasks 🚀</string>
+    <string name="template_tasks_content"># Project: New Application 🚀\n\nUse this interactive checklist to organize your development plans. You can tap checkboxes directly from the reader to update the document!\n\n## Design Tasks\n- [x] Choose an elegant font for reading\n- [x] Configure dark mode and background themes (Papel and Sepia)\n- [ ] Refine Material 3 shadows and borders\n\n## Code Tasks\n- [x] Configure Room local database\n- [ ] Implement interactive text editor with formatting toolbar\n- [ ] Add copy button for code blocks to Clipboard</string>
+    <string name="font_sans">Modern Sans</string>
+    <string name="font_serif">Classic Serif</string>
+    <string name="font_monospace">System Monospace</string>
+
+    <string name="theme_immersive">Immersive 🌌</string>
+    <string name="theme_paper">Light Paper</string>
+    <string name="theme_sepia">Warm Sepia</string>
+    <string name="theme_charcoal">Charcoal</string>
+    <string name="theme_black">Pitch Black</string>
 </resources>

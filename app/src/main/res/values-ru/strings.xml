@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">Marked</string>
+    <string name="app_subtitle">Легкий ридер и редактор</string>
+    <string name="not_selected">Не выбрано</string>
+    <string name="folder_notes">Папка заметок</string>
+    <string name="read_mode">Режим чтения</string>
+    <string name="edit_mode">Режим редактирования</string>
+    <string name="options">Опции</string>
+    <string name="search_placeholder">Поиск заметок...</string>
+    <string name="documents_header">ДОКУМЕНТЫ (%1$d)</string>
+    <string name="no_documents_selected">Документ не выбран</string>
+    <string name="create_or_open_templates">Создайте новый документ или откройте приветственные шаблоны!</string>
+    <string name="new_document">Новый документ</string>
+    <string name="word_count">%1$d слов</string>
+    <string name="empty_document_msg">Пустой документ. Нажмите Редактировать, чтобы написать.</string>
+    <string name="words_not_found">Заметки не найдены</string>
+
+    <string name="time_now">Сейчас</string>
+    <string name="time_moment">Только что</string>
+    <string name="time_min">%1$d мин. назад</string>
+    <string name="time_hr">%1$d ч. назад</string>
+    <string name="time_days">%1$d дн. назад</string>
+
+    <string name="rename_note">Переименовать заметку</string>
+    <string name="export_html">Экспорт в HTML</string>
+    <string name="export_pdf">Экспорт в PDF</string>
+    <string name="delete_note">Удалить заметку</string>
+    <string name="code_copied">Код скопирован</string>
+    <string name="html_saved_downloads">Файл сохранен в Загрузки: %1$s</string>
+    <string name="html_save_error">Ошибка при сохранении HTML: %1$s</string>
+    <string name="html_saved_cache">Сохранено во внутренний кэш из-за ограничений хранилища</string>
+    <string name="print_service_unavailable">Служба печати недоступна на этом устройстве</string>
+    <string name="print_processing_error">Ошибка обработки печати: %1$s</string>
+    <string name="print_webview_unavailable">Служба печати или компонент WebView недоступны</string>
+    <string name="share_html_title">Поделиться документом HTML</string>
+    <string name="share_subject">Экспортированный документ</string>
+    <string name="share_error">Не удалось поделиться файлом: %1$s</string>
+    <string name="cannot_create_downloads_file">Не удалось создать файл в Загрузках</string>
+    <string name="exporter_updated_at">Обновлено: %1$s</string>
+
+    <string name="pref_dialog_title">Настройки чтения</string>
+    <string name="pref_font_title">Шрифт:</string>
+    <string name="pref_font_size">Размер шрифта: (%1$d sp)</string>
+    <string name="pref_spacing_title">Межстрочный интервал:</string>
+    <string name="pref_theme_title">Цветовая схема (Светлая/Темная):</string>
+    <string name="spacing_compact">Компактный</string>
+    <string name="spacing_standard">Стандартный</string>
+    <string name="spacing_spacious">Просторный</string>
+    <string name="accept">Принять</string>
+
+    <string name="create_dialog_title">Новый Markdown-документ</string>
+    <string name="create_dialog_text">Введите название вашей заметки:</string>
+    <string name="create_dialog_placeholder">например: Проект, Дневник, Заметки</string>
+    <string name="btn_create">Создать</string>
+    <string name="btn_cancel">Отмена</string>
+    <string name="rename_dialog_title">Переименовать документ</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="delete_dialog_title">Удалить заметку?</string>
+    <string name="delete_dialog_text">Это действие навсегда удалит заметку «%1$s» из локальной базы данных, и его нельзя будет отменить.</string>
+    <string name="btn_delete">Удалить</string>
+    <string name="btn_back">Назад</string>
+    <string name="untitled_doc">Без названия</string>
+    <string name="editor_placeholder">Начните писать заметку в формате Markdown...</string>
+
+    <string name="tb_bold">Жирный</string>
+    <string name="tb_italic">Курсив</string>
+    <string name="tb_title">Заголовок</string>
+    <string name="tb_code">Код</string>
+    <string name="tb_item">Элемент</string>
+    <string name="tb_task">Задача</string>
+    <string name="tb_link">Ссылка</string>
+    <string name="tb_quote">Цитата</string>
+    <string name="tb_line">Линия</string>
+
+    <string name="template_welcome_title">Добро пожаловать в Marked! 📑</string>
+    <string name="template_welcome_content"># Добро пожаловать в Marked! 📑\n\n**Marked** — это высокопроизводительный, легкий редактор и ридер Markdown, разработанный специально для Android. Здесь вы можете создавать, организовывать и читать свои заметки в формате **Markdown** с превосходным качеством типографики.\n\n### Основные возможности:\n- ⚡ **Качественный ридер**: Адаптивный и безупречный рендеринг на всех ваших устройствах.\n- 🎨 **Настраиваемые шрифты**: Быстро регулируйте размер шрифта, межстрочный интервал и стиль текста.\n- 🌓 **Нативный темный режим**: Выбирайте из нескольких подобранных тем (Бумага, Сепия, Уголь или Абсолютно черный) для защиты зрения.\n- ☑️ **Интерактивные списки задач**: Нажимайте на чекбоксы прямо в режиме чтения для выполнения задач.\n\n> Откройте боковую панель свайпом или нажатием кнопки папки, чтобы создать или переименовать заметки.\n\n---\nСоздано с любовью командой Marked.</string>
+
+    <string name="template_syntax_title">Справочник по синтаксису 🖋️</string>
+    <string name="template_syntax_content"># Справочник по синтаксису Markdown 🖋️\n\nЭта заметка поможет вам изучить расширенные возможности форматирования, поддерживаемые нашим качественным ридером.\n\n## Заголовки\nВы можете использовать заголовки от 1-го до 4-го уровня:\n### Заголовок 3-го уровня (Очень элегантный)\n#### Заголовок 4-го уровня (Компактный и красивый)\n\n---\n\n## Форматирование текста\n- Вы можете писать **жирным шрифтом** для выделения важных идей.\n- Вы можете писать *курсивом* для акцентирования.\n- Вы можете использовать `встроенный код` для переменных или коротких тегов.\n- Или добавлять гиперссылки, например [Google](https://google.com).\n\n---\n\n## Цитаты и мысли\n> \"Хороший дизайн виден в деталях типографики и интервалов.\" — Команда дизайна\n\n---\n\n## Блоки кода\nВот пример кода на Kotlin:\n```kotlin\nfun main() {\n    println(\"Привет из Marked!\")\n}\n```</string>
+
+    <string name="template_tasks_title">Мои задачи 🚀</string>
+    <string name="template_tasks_content"># Проект: Новое приложение 🚀\n\nИспользуйте этот интерактивный список задач для организации ваших планов разработки. Вы можете нажимать на чекбоксы прямо в ридере, чтобы обновлять документ!\n\n## Задачи по дизайну\n- [x] Выбрать элегантный шрифт для чтения\n- [x] Настроить темный режим и фоновые темы (Бумага и Сепия)\n- [ ] Доработать тени и границы Material 3\n\n## Задачи по коду\n- [x] Настроить локальную базу данных Room\n- [ ] Реализовать интерактивный текстовый редактор с панелью форматирования\n- [ ] Добавить кнопку копирования блоков кода в буфер обмена</string>
+    <string name="font_sans">Модерн Санс</string>
+    <string name="font_serif">Классический Сериф</string>
+    <string name="font_monospace">Системный Моноширинный</string>
+
+    <string name="theme_immersive">Иммерсивный 🌌</string>
+    <string name="theme_paper">Светлая бумага</string>
+    <string name="theme_sepia">Теплая сепия</string>
+    <string name="theme_charcoal">Уголь</string>
+    <string name="theme_black">Абсолютно черный</string>
+</resources>

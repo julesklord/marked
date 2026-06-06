@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import com.example.R
 import com.example.data.MarkdownDocument
 import java.io.File
 import java.io.FileOutputStream
@@ -29,6 +30,10 @@ object MarkdownExporter {
     }
 
     fun generateHtmlWithTheme(document: MarkdownDocument, preferences: ReaderPreferences): String {
+        return generateHtmlWithTheme(null, document, preferences)
+    }
+
+    fun generateHtmlWithTheme(context: Context?, document: MarkdownDocument, preferences: ReaderPreferences): String {
         val blocks = MarkdownParser.parse(document.content)
         val theme = preferences.selectedTheme
         
@@ -54,7 +59,7 @@ object MarkdownExporter {
         val html = StringBuilder()
         html.append("""
             <!DOCTYPE html>
-            <html lang="es">
+            <html lang="${Locale.getDefault().language}">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -213,11 +218,17 @@ object MarkdownExporter {
         """.trimIndent())
 
         // Header info matching current view style
+        val dateFormatted = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(document.updatedAt)
+        val updatedLabel = if (context != null) {
+            context.getString(R.string.exporter_updated_at, dateFormatted)
+        } else {
+            "Updated: $dateFormatted"
+        }
         html.append("""
             <div style="margin-bottom: 32px;">
                 <h1 style="margin-top: 0; margin-bottom: 4px;">${escapeHtml(document.title)}</h1>
                 <div style="font-size: 0.8em; color: ${fgColor}99; display: flex; gap: 12px; margin-bottom: 16px;">
-                    <span>Actualizado: ${SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(document.updatedAt)}</span>
+                    <span>${escapeHtml(updatedLabel)}</span>
                 </div>
             </div>
         """.trimIndent())
@@ -414,7 +425,7 @@ object MarkdownExporter {
     }
 
     fun exportHtml(context: Context, document: MarkdownDocument, preferences: ReaderPreferences) {
-        val htmlContent = generateHtmlWithTheme(document, preferences)
+        val htmlContent = generateHtmlWithTheme(context, document, preferences)
         val fileName = "${document.title.replace("\\s+".toRegex(), "_")}.html"
 
         try {
@@ -430,10 +441,10 @@ object MarkdownExporter {
                     resolver.openOutputStream(uri).use { output ->
                         output?.write(htmlContent.toByteArray(Charsets.UTF_8))
                     }
-                    Toast.makeText(context, "Archivo guardado en Descargas: $fileName", Toast.LENGTH_LONG).show()
-                    shareFile(context, uri, "text/html", "Compartir documento HTML")
+                    Toast.makeText(context, context.getString(R.string.html_saved_downloads, fileName), Toast.LENGTH_LONG).show()
+                    shareFile(context, uri, "text/html", context.getString(R.string.share_html_title))
                 } else {
-                    throw Exception("No se pudo crear el archivo en Descargas")
+                    throw Exception(context.getString(R.string.cannot_create_downloads_file))
                 }
             } else {
                 val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -442,7 +453,7 @@ object MarkdownExporter {
                 FileOutputStream(file).use { output ->
                     output.write(htmlContent.toByteArray(Charsets.UTF_8))
                 }
-                Toast.makeText(context, "Archivo guardado en Descargas: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.html_saved_downloads, file.absolutePath), Toast.LENGTH_LONG).show()
                 val uri = try {
                     androidx.core.content.FileProvider.getUriForFile(
                         context,
@@ -452,7 +463,7 @@ object MarkdownExporter {
                 } catch (e: Exception) {
                     Uri.fromFile(file)
                 }
-                shareFile(context, uri, "text/html", "Compartir documento HTML")
+                shareFile(context, uri, "text/html", context.getString(R.string.share_html_title))
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -469,18 +480,18 @@ object MarkdownExporter {
                     "com.aistudio.marked.readereditor.fileprovider",
                     file
                 )
-                Toast.makeText(context, "Guardado en caché de la app debido a restricciones de almacenamiento", Toast.LENGTH_LONG).show()
-                shareFile(context, uri, "text/html", "Compartir documento HTML")
+                Toast.makeText(context, context.getString(R.string.html_saved_cache), Toast.LENGTH_LONG).show()
+                shareFile(context, uri, "text/html", context.getString(R.string.share_html_title))
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                Toast.makeText(context, "Error al guardar el HTML: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.html_save_error, e.message), Toast.LENGTH_LONG).show()
             }
         }
     }
 
     fun printPdf(context: Context, document: MarkdownDocument, preferences: ReaderPreferences) {
         try {
-            val htmlContent = generateHtmlWithTheme(document, preferences)
+            val htmlContent = generateHtmlWithTheme(context, document, preferences)
             val webView = WebView(context).apply {
                 settings.javaScriptEnabled = false
             }
@@ -500,11 +511,11 @@ object MarkdownExporter {
                                     .build()
                             )
                         } else {
-                            Toast.makeText(context, "El servicio de impresión no está disponible en este dispositivo", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, context.getString(R.string.print_service_unavailable), Toast.LENGTH_LONG).show()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        Toast.makeText(context, "Error al procesar la impresión: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.print_processing_error, e.localizedMessage), Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -512,7 +523,7 @@ object MarkdownExporter {
             webView.loadDataWithBaseURL("https://local.reader/", htmlContent, "text/html", "utf-8", "https://local.reader/")
         } catch (e: Throwable) {
             e.printStackTrace()
-            Toast.makeText(context, "El servicio de impresión o componente WebView no está disponible", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.print_webview_unavailable), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -521,7 +532,7 @@ object MarkdownExporter {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = mimeType
                 putExtra(Intent.EXTRA_STREAM, uri)
-                putExtra(Intent.EXTRA_SUBJECT, "Documento Exportado")
+                putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_subject))
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             val chooserIntent = Intent.createChooser(shareIntent, title).apply {
@@ -530,7 +541,7 @@ object MarkdownExporter {
             context.startActivity(chooserIntent)
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "No se pudo compartir el archivo: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.share_error, e.message), Toast.LENGTH_LONG).show()
         }
     }
 }

@@ -24,10 +24,9 @@ class GreetingScreenshotTest {
   fun greeting_screenshot() {
     composeTestRule.setContent {
       MarkdownRenderer(
-        content = "# Prueba de Renderizado 📑\n\nEste es un párrafo de prueba en el motor de renderizado de alta calidad de **Marked**.",
-        preferences = ReaderPreferences(),
-        onToggleChecklist = {}
-      )
+          content = "# Prueba de Renderizado 📑\n\nEste es un párrafo de prueba en el motor de renderizado de alta calidad de **Marked**.",
+          preferences = ReaderPreferences(),
+      ) {}
     }
 
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/greeting.png")

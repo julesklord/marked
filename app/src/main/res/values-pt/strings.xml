@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">Marked</string>
+    <string name="app_subtitle">Leitor e editor leve</string>
+    <string name="not_selected">Não selecionado</string>
+    <string name="folder_notes">Pasta de notas</string>
+    <string name="read_mode">Modo de Leitura</string>
+    <string name="edit_mode">Modo de Edição</string>
+    <string name="options">Opções</string>
+    <string name="search_placeholder">Buscar notas...</string>
+    <string name="documents_header">DOCUMENTOS (%1$d)</string>
+    <string name="no_documents_selected">Nenhum documento selecionado</string>
+    <string name="create_or_open_templates">Crie um novo documento ou abra os modelos de boas-vindas!</string>
+    <string name="new_document">Novo Documento</string>
+    <string name="word_count">%1$d palavras</string>
+    <string name="empty_document_msg">Documento vazio. Clique em Editar para escrever.</string>
+    <string name="words_not_found">Notas não encontradas</string>
+
+    <string name="time_now">Agora</string>
+    <string name="time_moment">Há um momento</string>
+    <string name="time_min">Há %1$d min</string>
+    <string name="time_hr">Há %1$d hr</string>
+    <string name="time_days">Há %1$d dias</string>
+
+    <string name="rename_note">Renomear nota</string>
+    <string name="export_html">Exportar como HTML</string>
+    <string name="export_pdf">Exportar como PDF</string>
+    <string name="delete_note">Excluir nota</string>
+    <string name="code_copied">Código copiado</string>
+    <string name="html_saved_downloads">Arquivo salvo em Downloads: %1$s</string>
+    <string name="html_save_error">Erro ao salvar HTML: %1$s</string>
+    <string name="html_saved_cache">Salvo no cache do aplicativo devido a restrições de armazenamento</string>
+    <string name="print_service_unavailable">O serviço de impressão não está disponível neste dispositivo</string>
+    <string name="print_processing_error">Erro ao processar impressão: %1$s</string>
+    <string name="print_webview_unavailable">O serviço de impressão ou componente WebView não está disponível</string>
+    <string name="share_html_title">Compartilhar documento HTML</string>
+    <string name="share_subject">Documento Exportado</string>
+    <string name="share_error">Não foi possível compartilhar o arquivo: %1$s</string>
+    <string name="cannot_create_downloads_file">Não foi possível criar o arquivo em Downloads</string>
+    <string name="exporter_updated_at">Atualizado: %1$s</string>
+
+    <string name="pref_dialog_title">Preferências de Leitura</string>
+    <string name="pref_font_title">Fonte Tipográfica:</string>
+    <string name="pref_font_size">Tamanho da Fonte: (%1$dsp)</string>
+    <string name="pref_spacing_title">Espaçamento de Linhas:</string>
+    <string name="pref_theme_title">Esquema de Cores (Claro/Escuro):</string>
+    <string name="spacing_compact">Compacto</string>
+    <string name="spacing_standard">Padrão</string>
+    <string name="spacing_spacious">Espaçoso</string>
+    <string name="accept">Aceitar</string>
+
+    <string name="create_dialog_title">Novo Documento Markdown</string>
+    <string name="create_dialog_text">Digite um título para sua nota:</string>
+    <string name="create_dialog_placeholder">ex: Projeto, Diário, Notas</string>
+    <string name="btn_create">Criar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="rename_dialog_title">Renomear Documento</string>
+    <string name="btn_save">Salvar</string>
+    <string name="delete_dialog_title">Excluir Nota?</string>
+    <string name="delete_dialog_text">Esta ação excluirá permanentemente a nota \"%1$s\" do seu banco de dados local e não poderá ser desfeita.</string>
+    <string name="btn_delete">Excluir</string>
+    <string name="btn_back">Voltar</string>
+    <string name="untitled_doc">Sem Título</string>
+    <string name="editor_placeholder">Comece a escrever sua nota usando o formato Markdown...</string>
+
+    <string name="tb_bold">Negrito</string>
+    <string name="tb_italic">Itálico</string>
+    <string name="tb_title">Título</string>
+    <string name="tb_code">Código</string>
+    <string name="tb_item">Item</string>
+    <string name="tb_task">Tarefa</string>
+    <string name="tb_link">Link</string>
+    <string name="tb_quote">Citação</string>
+    <string name="tb_line">Linha</string>
+
+    <string name="template_welcome_title">Bem-vindo ao Marked! 📑</string>
+    <string name="template_welcome_content"># Bem-vindo ao Marked! 📑\n\n**Marked** é um editor e leitor leve de alto desempenho projetado exclusivamente para Android. Aqui você pode criar, organizar e ler suas notas no formato **Markdown** com uma experiência tipográfica de alto padrão.\n\n### Recursos Principais:\n- ⚡ **Leitor de Alta Qualidade**: Renderização responsiva impecável para todos os seus dispositivos.\n- 🎨 **Fontes Configuráveis**: Ajuste o tamanho da fonte, espaçamento de linhas e estilo tipográfico instantaneamente.\n- 🌓 **Modo Escuro Nativo**: Escolha entre vários temas selecionados (Papel, Sepia, Carbono ou Preto Absoluto) para proteger seus olhos.\n- ☑️ **Listas de Tarefas Interativas**: Toque nas caixas de seleção diretamente da visualização do leitor para concluir tarefas.\n\n> Abra o menu lateral deslizando ou tocando no botão da pasta para criar ou renomear suas notas.\n\n---\nCriado com carinho pela equipe do Marked.</string>
+
+    <string name="template_syntax_title">Guia de Sintaxe 🖋️</string>
+    <string name="template_syntax_content"># Guia de Sintaxis Markdown 🖋️\n\nEsta nota ajuda você a explorar as ricas opções de formatação suportadas pelo nosso leitor de alta qualidade.\n\n## Cabeçalhos\nVocê pode usar cabeçalhos do nível 1 ao nível 4:\n### Cabeçalho Nível 3 (Muito elegante)\n#### Cabeçalho Nível 4 (Compacto e bonito)\n\n---\n\n## Formatação de Texto\n- Você pode escrever em **negrito** para destacar ideias importantes.\n- Você pode escrever em *itálico* para dar ênfase.\n- Você pode usar `código em linha` para variáveis ou tags curtas.\n- Ou adicionar links como [Google](https://google.com).\n\n---\n\n## Citações e Pensamentos\n> \"O bom design é visível nos detalhes da tipografia e do espaçamento.\" — Equipe de Design\n\n---\n\n## Blocos de Código\nAqui está um exemplo de código em Kotlin:\n```kotlin\nfun main() {\n    println(\"Olá do Marked!\")\n}\n```</string>
+
+    <string name="template_tasks_title">Minhas Tarefas 🚀</string>
+    <string name="template_tasks_content"># Projeto: Novo Aplicativo 🚀\n\nUse esta lista interativa para organizar seus planos de desenvolvimento. Você pode tocar nas caixas diretamente no leitor para atualizar o documento!\n\n## Tarefas de Design\n- [x] Escolher uma fonte elegante para leitura\n- [x] Configurar modo escuro e temas de fundo (Papel e Sepia)\n- [ ] Refinar sombras e bordas do Material 3\n\n## Tarefas de Código\n- [x] Configurar banco de dados local Room\n- [ ] Implementar editor de texto interativo com barra de ferramentas\n- [ ] Adicionar botão para copiar blocos de código para a área de transferência</string>
+    <string name="font_sans">Sans Moderna</string>
+    <string name="font_serif">Serif Editorial</string>
+    <string name="font_monospace">Monospace</string>
+
+    <string name="theme_immersive">Imersivo 🌌</string>
+    <string name="theme_paper">Papel Claro</string>
+    <string name="theme_sepia">Sepia Aconchegante</string>
+    <string name="theme_charcoal">Carbono</string>
+    <string name="theme_black">Preto Absoluto</string>
+</resources>
