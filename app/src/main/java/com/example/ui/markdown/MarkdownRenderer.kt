@@ -110,7 +110,7 @@ fun MarkdownRenderer(
                             .padding(top = topPadding, bottom = 8.dp)
                     ) {
                         Text(
-                            text = block.text,
+                            text = parseInlineText(block.text, codeBgColor, accentColor),
                             style = TextStyle(
                                 fontFamily = preferences.selectedFont.fontFamily,
                                 fontSize = (preferences.fontSizeSp * scale).sp,
