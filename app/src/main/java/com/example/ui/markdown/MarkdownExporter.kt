@@ -58,7 +58,7 @@ object MarkdownExporter {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${document.title}</title>
+                <title>${escapeHtml(document.title)}</title>
                 <style>
                     body {
                         $backgroundStyle
@@ -215,7 +215,7 @@ object MarkdownExporter {
         // Header info matching current view style
         html.append("""
             <div style="margin-bottom: 32px;">
-                <h1 style="margin-top: 0; margin-bottom: 4px;">${document.title}</h1>
+                <h1 style="margin-top: 0; margin-bottom: 4px;">${escapeHtml(document.title)}</h1>
                 <div style="font-size: 0.8em; color: ${fgColor}99; display: flex; gap: 12px; margin-bottom: 16px;">
                     <span>Actualizado: ${SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(document.updatedAt)}</span>
                 </div>
@@ -259,8 +259,8 @@ object MarkdownExporter {
                     html.append("</ul>")
                 }
                 is MarkdownBlock.CodeBlock -> {
-                    html.append("<pre><code class=\"language-${block.language}\">")
-                    html.append(escapeHtml(highlightHtmlCode(block.code, theme.isDark)))
+                    html.append("<pre><code class=\"language-${escapeHtml(block.language)}\">")
+                    html.append(highlightHtmlCode(block.code, theme.isDark))
                     html.append("</code></pre>")
                 }
                 is MarkdownBlock.Quote -> {
@@ -329,7 +329,7 @@ object MarkdownExporter {
                             if (closeParen != -1) {
                                 val label = text.substring(i + 1, closeBracket)
                                 val url = text.substring(closeBracket + 2, closeParen)
-                                out.append("<a href=\"").append(escapeHtml(url)).append("\">")
+                                out.append("<a href=\"").append(escapeHtml(sanitizeUrl(url))).append("\">")
                                    .append(parseInlineToHtml(label, accentColor)).append("</a>")
                                 i = closeParen + 1
                                 continue
@@ -356,8 +356,21 @@ object MarkdownExporter {
                   .replace("'", "&#x27;")
     }
 
+    // Only allow safe link schemes to avoid javascript:/data: injection in exported HTML.
+    private fun sanitizeUrl(url: String): String {
+        val trimmed = url.trim()
+        // Relative links and fragments/anchors are safe.
+        if (trimmed.startsWith("#") || trimmed.startsWith("/") || trimmed.startsWith("./") || trimmed.startsWith("../")) {
+            return trimmed
+        }
+        val lower = trimmed.lowercase()
+        val allowed = listOf("http://", "https://", "mailto:", "tel:")
+        return if (allowed.any { lower.startsWith(it) }) trimmed else "#"
+    }
+
     private fun highlightHtmlCode(code: String, isDark: Boolean): String {
-        if (!isDark) return code
+        // Always HTML-escape the code text; only the wrapping <span> tags are intentional markup.
+        if (!isDark) return escapeHtml(code)
         val keywords = setOf("fun", "function", "val", "var", "class", "import", "return", "package", "override", "let", "const")
         val lines = code.split("\n")
         val highlighted = mutableListOf<String>()
@@ -367,7 +380,7 @@ object MarkdownExporter {
             val out = java.lang.StringBuilder()
             while (i < len) {
                 if (line.startsWith("//", i) || line.startsWith("#", i)) {
-                    out.append("<span class=\"comment\">").append(line.substring(i)).append("</span>")
+                    out.append("<span class=\"comment\">").append(escapeHtml(line.substring(i))).append("</span>")
                     break
                 } else if (line[i] == '"' || line[i] == '\'') {
                     val quote = line[i]
@@ -376,7 +389,7 @@ object MarkdownExporter {
                         if (line[end] == '\\' && end + 1 < len) end += 2 else end++
                     }
                     if (end < len) end++
-                    out.append("<span class=\"string\">").append(line.substring(i, end)).append("</span>")
+                    out.append("<span class=\"string\">").append(escapeHtml(line.substring(i, end))).append("</span>")
                     i = end
                 } else if (line[i].isLetter()) {
                     var end = i
@@ -385,13 +398,13 @@ object MarkdownExporter {
                     }
                     val word = line.substring(i, end)
                     if (word in keywords) {
-                        out.append("<span class=\"keyword\">").append(word).append("</span>")
+                        out.append("<span class=\"keyword\">").append(escapeHtml(word)).append("</span>")
                     } else {
-                        out.append(word)
+                        out.append(escapeHtml(word))
                     }
                     i = end
                 } else {
-                    out.append(line[i])
+                    out.append(escapeHtml(line[i].toString()))
                     i++
                 }
             }
