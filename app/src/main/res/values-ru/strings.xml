@@ -5,8 +5,9 @@
     <string name="folder_notes">Папка заметок</string>
     <string name="read_mode">Режим чтения</string>
     <string name="edit_mode">Режим редактирования</string>
-    <string name="options">Опции</string>
+    <string name="options">Настройки</string>
     <string name="search_placeholder">Поиск заметок...</string>
+    <string name="clear_search">Очистить поиск</string>
     <string name="documents_header">ДОКУМЕНТЫ (%1$d)</string>
     <string name="no_documents_selected">Документ не выбран</string>
     <string name="create_or_open_templates">Создайте новый документ или откройте приветственные шаблоны!</string>

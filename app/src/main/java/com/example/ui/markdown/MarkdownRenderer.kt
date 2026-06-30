@@ -394,10 +394,11 @@ fun MarkdownRenderer(
                                     )
                                 )
                             }
+                            val codeCopiedMessage = stringResource(R.string.code_copied)
                             IconButton(
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(block.code))
-                                    Toast.makeText(context, context.getString(R.string.code_copied), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, codeCopiedMessage, Toast.LENGTH_SHORT).show()
                                 },
                                 modifier = Modifier.size(24.dp)
                             ) {
