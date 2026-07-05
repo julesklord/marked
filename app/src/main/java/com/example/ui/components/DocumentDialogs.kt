@@ -11,6 +11,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +42,7 @@ fun CreateDocumentDialog(
     val fgColor = Color(theme.hexForeground)
     val accentColor = Color(theme.hexAccent)
     var inputTitle by remember { mutableStateOf("") }
+    val isInputValid = inputTitle.isNotBlank()
     val focusRequester = remember { FocusRequester() }
 
     AlertDialog(
@@ -63,6 +67,12 @@ fun CreateDocumentDialog(
                         focusedBorderColor = accentColor,
                         unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                     ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        if (isInputValid) {
+                            onConfirm(inputTitle.trim())
+                        }
+                    }),
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
@@ -73,9 +83,10 @@ fun CreateDocumentDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onConfirm(inputTitle.trim())
+                    if (isInputValid) onConfirm(inputTitle.trim())
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                enabled = isInputValid,
+                colors = ButtonDefaults.buttonColors(containerColor = accentColor, disabledContainerColor = accentColor.copy(alpha = 0.5f), disabledContentColor = Color(theme.hexBackground).copy(alpha = 0.5f)),
                 modifier = Modifier.testTag("confirm_create_button")
             ) {
                 Text(stringResource(R.string.btn_create), color = Color(theme.hexBackground))
@@ -104,6 +115,7 @@ fun RenameDocumentDialog(
     val fgColor = Color(theme.hexForeground)
     val accentColor = Color(theme.hexAccent)
     var inputTitle by remember { mutableStateOf(document.title) }
+    val isInputValid = inputTitle.isNotBlank()
     val focusRequester = remember { FocusRequester() }
 
     AlertDialog(
@@ -121,6 +133,12 @@ fun RenameDocumentDialog(
                         focusedBorderColor = accentColor,
                         unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                     ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        if (isInputValid) {
+                            onConfirm(inputTitle.trim())
+                        }
+                    }),
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
@@ -131,9 +149,10 @@ fun RenameDocumentDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onConfirm(inputTitle.trim())
+                    if (isInputValid) onConfirm(inputTitle.trim())
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                enabled = isInputValid,
+                colors = ButtonDefaults.buttonColors(containerColor = accentColor, disabledContainerColor = accentColor.copy(alpha = 0.5f), disabledContentColor = Color(theme.hexBackground).copy(alpha = 0.5f)),
                 modifier = Modifier.testTag("confirm_rename_button")
             ) {
                 Text(stringResource(R.string.btn_save), color = Color(theme.hexBackground))
