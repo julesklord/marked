@@ -220,7 +220,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             IconButton(onClick = {}) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                                    contentDescription = null,
+                                    contentDescription = stringResource(R.string.folder_notes),
                                     tint = accentColor
                                 )
                             }
@@ -274,7 +274,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.DriveFileRenameOutline,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.rename_note),
                                                 tint = accentColor
                                             )
                                         },
@@ -288,7 +288,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Download,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.export_html),
                                                 tint = accentColor
                                             )
                                         },
@@ -304,7 +304,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Print,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.export_pdf),
                                                 tint = accentColor
                                             )
                                         },
@@ -320,7 +320,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Delete,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.delete_note),
                                                 tint = MaterialTheme.colorScheme.error
                                             )
                                         },
@@ -363,7 +363,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.Notes,
-                                contentDescription = "Vacío",
+                                contentDescription = stringResource(R.string.empty_notes_icon),
                                 tint = accentColor.copy(alpha = 0.3f),
                                 modifier = Modifier.size(96.dp)
                             )
@@ -386,7 +386,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 onClick = { showCreateDialog = true },
                                 colors = ButtonDefaults.buttonColors(containerColor = accentColor)
                             ) {
-                                Icon(Icons.Default.Add, contentDescription = null)
+                                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.new_document))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(stringResource(R.string.new_document), color = Color(theme.hexBackground))
                             }
@@ -931,7 +931,7 @@ fun SidebarContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.AddCircle,
-                    contentDescription = "Crear Nuevo",
+                    contentDescription = stringResource(R.string.new_document),
                     tint = accentColor
                 )
             }
@@ -1012,7 +1012,7 @@ fun SidebarContent(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.DriveFileRenameOutline,
-                                            contentDescription = "Renombrar",
+                                            contentDescription = stringResource(R.string.rename_note),
                                             tint = fgColor.copy(alpha = 0.3f),
                                             modifier = Modifier.size(12.dp)
                                         )
@@ -1024,7 +1024,7 @@ fun SidebarContent(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Delete,
-                                            contentDescription = "Borrar",
+                                            contentDescription = stringResource(R.string.delete_note),
                                             tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
                                             modifier = Modifier.size(12.dp)
                                         )
