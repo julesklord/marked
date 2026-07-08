@@ -890,8 +890,20 @@ fun SidebarContent(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = onSearchChange,
-            placeholder = { Text("Buscar notas...", fontSize = 12.sp, color = fgColor.copy(0.4f)) },
+            placeholder = { Text(stringResource(R.string.search_placeholder), fontSize = 12.sp, color = fgColor.copy(0.4f)) },
             leadingIcon = { Icon(Icons.Default.Search, null, modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { onSearchChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(R.string.clear_search),
+                            tint = fgColor.copy(0.4f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            },
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
