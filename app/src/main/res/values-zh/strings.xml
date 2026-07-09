@@ -27,6 +27,8 @@
     <string name="export_pdf">导出为 PDF</string>
     <string name="delete_note">删除笔记</string>
     <string name="code_copied">代码已复制</string>
+    <string name="copy_code">复制代码</string>
+    <string name="empty_notes_icon">空笔记</string>
     <string name="html_saved_downloads">文件已保存至下载目录：%1$s</string>
     <string name="html_save_error">保存 HTML 出错：%1$s</string>
     <string name="html_saved_cache">由于存储限制，已保存至应用缓存</string>

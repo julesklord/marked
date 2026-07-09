@@ -27,6 +27,8 @@
     <string name="export_pdf">Экспорт в PDF</string>
     <string name="delete_note">Удалить заметку</string>
     <string name="code_copied">Код скопирован</string>
+    <string name="copy_code">Копировать код</string>
+    <string name="empty_notes_icon">Пустые заметки</string>
     <string name="html_saved_downloads">Файл сохранен в Загрузки: %1$s</string>
     <string name="html_save_error">Ошибка при сохранении HTML: %1$s</string>
     <string name="html_saved_cache">Сохранено во внутренний кэш из-за ограничений хранилища</string>

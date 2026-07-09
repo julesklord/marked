@@ -27,6 +27,8 @@
     <string name="export_pdf">Export as PDF</string>
     <string name="delete_note">Delete note</string>
     <string name="code_copied">Code copied</string>
+    <string name="copy_code">Copy code</string>
+    <string name="empty_notes_icon">Empty notes</string>
     <string name="html_saved_downloads">File saved to Downloads: %1$s</string>
     <string name="html_save_error">Error saving HTML: %1$s</string>
     <string name="html_saved_cache">Saved to app cache due to storage restrictions</string>
