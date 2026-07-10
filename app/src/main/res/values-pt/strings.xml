@@ -7,6 +7,7 @@
     <string name="edit_mode">Modo de Edição</string>
     <string name="options">Opções</string>
     <string name="search_placeholder">Buscar notas...</string>
+    <string name="search_icon_description">Buscar</string>
     <string name="clear_search">Limpar pesquisa</string>
     <string name="documents_header">DOCUMENTOS (%1$d)</string>
     <string name="no_documents_selected">Nenhum documento selecionado</string>

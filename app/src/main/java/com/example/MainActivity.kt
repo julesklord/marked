@@ -891,7 +891,7 @@ fun SidebarContent(
             value = searchQuery,
             onValueChange = onSearchChange,
             placeholder = { Text(stringResource(R.string.search_placeholder), fontSize = 12.sp, color = fgColor.copy(0.4f)) },
-            leadingIcon = { Icon(Icons.Default.Search, null, modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
+            leadingIcon = { Icon(Icons.Default.Search, stringResource(R.string.search_icon_description), modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
             trailingIcon = {
                 if (searchQuery.isNotEmpty()) {
                     IconButton(onClick = { onSearchChange("") }) {
