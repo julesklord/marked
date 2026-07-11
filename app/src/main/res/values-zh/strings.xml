@@ -7,6 +7,7 @@
     <string name="edit_mode">编辑模式</string>
     <string name="options">选项</string>
     <string name="search_placeholder">搜索笔记...</string>
+    <string name="search_icon_description">搜索</string>
     <string name="clear_search">清除搜索</string>
     <string name="documents_header">文档 (%1$d)</string>
     <string name="no_documents_selected">未选择文档</string>

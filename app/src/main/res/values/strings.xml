@@ -7,6 +7,7 @@
     <string name="edit_mode">Editing Mode</string>
     <string name="options">Options</string>
     <string name="search_placeholder">Search notes...</string>
+    <string name="search_icon_description">Search</string>
     <string name="clear_search">Clear search</string>
     <string name="documents_header">DOCUMENTS (%1$d)</string>
     <string name="no_documents_selected">No document selected</string>
