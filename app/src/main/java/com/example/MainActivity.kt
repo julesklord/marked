@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.FactCheck
@@ -37,13 +38,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
@@ -127,6 +129,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+        val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
     var isMobileSidebarOpen by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf<MarkdownDocument?>(null) }
@@ -680,6 +683,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
         // CREATE NOTE DIALOG
         if (showCreateDialog) {
             var inputTitle by remember { mutableStateOf("") }
+            val isInputValid = inputTitle.isNotBlank()
             val focusRequester = remember { FocusRequester() }
             AlertDialog(
                 onDismissRequest = { showCreateDialog = false },
@@ -703,6 +707,13 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                if (isInputValid) {
+                                    viewModel.createNewDocument(inputTitle.trim())
+                                    showCreateDialog = false
+                                }
+                            }),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
@@ -713,10 +724,17 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            viewModel.createNewDocument(inputTitle.trim())
-                            showCreateDialog = false
+                            if (isInputValid) {
+                                viewModel.createNewDocument(inputTitle.trim())
+                                showCreateDialog = false
+                            }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        enabled = isInputValid,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = accentColor,
+                            disabledContainerColor = accentColor.copy(alpha = 0.5f),
+                            disabledContentColor = Color(theme.hexBackground).copy(alpha = 0.5f)
+                        ),
                         modifier = Modifier.testTag("confirm_create_button")
                     ) {
                         Text(stringResource(R.string.btn_create), color = Color(theme.hexBackground))
@@ -738,6 +756,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
         if (showRenameDialog != null) {
             val docToRename = showRenameDialog!!
             var inputTitle by remember { mutableStateOf(docToRename.title) }
+            val isInputValid = inputTitle.isNotBlank()
             val focusRequester = remember { FocusRequester() }
             AlertDialog(
                 onDismissRequest = { showRenameDialog = null },
@@ -754,6 +773,13 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                if (isInputValid) {
+                                    viewModel.renameDocument(docToRename.id, inputTitle.trim())
+                                    showRenameDialog = null
+                                }
+                            }),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
@@ -764,10 +790,17 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            viewModel.renameDocument(docToRename.id, inputTitle.trim())
-                            showRenameDialog = null
+                            if (isInputValid) {
+                                viewModel.renameDocument(docToRename.id, inputTitle.trim())
+                                showRenameDialog = null
+                            }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        enabled = isInputValid,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = accentColor,
+                            disabledContainerColor = accentColor.copy(alpha = 0.5f),
+                            disabledContentColor = Color(theme.hexBackground).copy(alpha = 0.5f)
+                        ),
                         modifier = Modifier.testTag("confirm_rename_button")
                     ) {
                         Text(stringResource(R.string.btn_save), color = Color(theme.hexBackground))
@@ -834,6 +867,7 @@ fun SidebarContent(
     val accentColor = Color(theme.hexAccent)
     val textBgColor = Color(theme.hexCodeBg)
     val fgColor = Color(theme.hexForeground)
+    val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
 
     // Filter documents dynamically
     val filteredDocs = remember(documents, searchQuery) {
@@ -914,6 +948,8 @@ fun SidebarContent(
                 focusedContainerColor = textBgColor.copy(alpha = 0.5f),
                 unfocusedContainerColor = textBgColor.copy(alpha = 0.5f)
             ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 12.dp)
@@ -1077,6 +1113,7 @@ fun MarkdownEditorArea(
     val bgColor = Color(theme.hexBackground)
     val textBgColor = Color(theme.hexCodeBg)
     val fgColor = Color(theme.hexForeground)
+    val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
     val accentColor = Color(theme.hexAccent)
 
     // Using a stateful TextFieldValue to preserve cursor position when formatting
