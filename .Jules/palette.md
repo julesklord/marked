@@ -8,3 +8,6 @@
 ## 2024-05-18 - Accessibility labels for Jetpack Compose Icons (Search)
 **Learning:** Found an accessibility opportunity in `MainActivity.kt` and `SidebarContent.kt` where the search icon inside the OutlinedTextField lacked a `contentDescription`. Providing a localized string resource for the icon's description improves screen reader experience. Always ensure translations for the new string resource are added across all supported locales (values-* directories) to avoid lint errors.
 **Action:** When adding icons to Compose UIs, always include an appropriate localized `contentDescription`.
+## 2025-02-23 - Submit Search Action Accessibility and Interaction Pattern
+**Learning:** Found an interaction improvement opportunity in the Search bar implementations (`SidebarContent.kt` and `MainActivity.kt`). Adding `keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)` and `keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() })` improves the UX by explicitly handling the keyboard search action instead of leaving it as a newline or unhandled action. This ensures the keyboard dismisses when the user executes a search intent.
+**Action:** Always add appropriate `KeyboardOptions` and `KeyboardActions` (e.g., `ImeAction.Search`, `ImeAction.Done`) for inputs to provide expected mobile keyboard interactions.
