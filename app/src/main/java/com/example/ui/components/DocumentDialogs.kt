@@ -11,6 +11,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
@@ -60,6 +64,17 @@ fun CreateDocumentDialog(
                     value = inputTitle,
                     onValueChange = { inputTitle = it },
                     placeholder = { Text(stringResource(R.string.create_dialog_placeholder)) },
+                    trailingIcon = {
+                        if (inputTitle.isNotEmpty()) {
+                            IconButton(onClick = { inputTitle = "" }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = stringResource(R.string.clear_input),
+                                    tint = fgColor.copy(alpha = 0.6f)
+                                )
+                            }
+                        }
+                    },
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = fgColor,
@@ -126,6 +141,17 @@ fun RenameDocumentDialog(
                 OutlinedTextField(
                     value = inputTitle,
                     onValueChange = { inputTitle = it },
+                    trailingIcon = {
+                        if (inputTitle.isNotEmpty()) {
+                            IconButton(onClick = { inputTitle = "" }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = stringResource(R.string.clear_input),
+                                    tint = fgColor.copy(alpha = 0.6f)
+                                )
+                            }
+                        }
+                    },
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = fgColor,

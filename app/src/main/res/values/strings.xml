@@ -9,6 +9,7 @@
     <string name="search_placeholder">Search notes...</string>
     <string name="search_icon_description">Search</string>
     <string name="clear_search">Clear search</string>
+    <string name="clear_input">Clear input</string>
     <string name="documents_header">DOCUMENTS (%1$d)</string>
     <string name="no_documents_selected">No document selected</string>
     <string name="create_or_open_templates">Create a new document or open the welcome templates!</string>

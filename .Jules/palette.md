@@ -11,3 +11,6 @@
 ## 2025-02-23 - Submit Search Action Accessibility and Interaction Pattern
 **Learning:** Found an interaction improvement opportunity in the Search bar implementations (`SidebarContent.kt` and `MainActivity.kt`). Adding `keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)` and `keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() })` improves the UX by explicitly handling the keyboard search action instead of leaving it as a newline or unhandled action. This ensures the keyboard dismisses when the user executes a search intent.
 **Action:** Always add appropriate `KeyboardOptions` and `KeyboardActions` (e.g., `ImeAction.Search`, `ImeAction.Done`) for inputs to provide expected mobile keyboard interactions.
+## 2024-11-23 - Clear Input Accessibility and Interaction Pattern
+**Learning:** Added a trailing clear icon button to OutlinedTextField inputs inside dialogs (Create/Rename) for easier query deletion. Verified conditional rendering based on input state and added accessibility descriptions across all supported locales.
+**Action:** Remember to add `trailingIcon` clears for user-friendly text input fields in forms and dialogs.
