@@ -9,6 +9,7 @@
     <string name="search_placeholder">Поиск заметок...</string>
     <string name="search_icon_description">Поиск</string>
     <string name="clear_search">Очистить поиск</string>
+    <string name="clear_input">Очистить ввод</string>
     <string name="documents_header">ДОКУМЕНТЫ (%1$d)</string>
     <string name="no_documents_selected">Документ не выбран</string>
     <string name="create_or_open_templates">Создайте новый документ или откройте приветственные шаблоны!</string>

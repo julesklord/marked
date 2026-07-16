@@ -9,6 +9,7 @@
     <string name="search_placeholder">Buscar notas...</string>
     <string name="search_icon_description">Buscar</string>
     <string name="clear_search">Limpar pesquisa</string>
+    <string name="clear_input">Limpar entrada</string>
     <string name="documents_header">DOCUMENTOS (%1$d)</string>
     <string name="no_documents_selected">Nenhum documento selecionado</string>
     <string name="create_or_open_templates">Crie um novo documento ou abra os modelos de boas-vindas!</string>
