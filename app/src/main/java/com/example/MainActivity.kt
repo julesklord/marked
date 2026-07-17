@@ -994,7 +994,7 @@ fun SidebarContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Archivos no encontrados",
+                    stringResource(R.string.words_not_found),
                     fontSize = 12.sp,
                     color = fgColor.copy(alpha = 0.4f),
                     fontStyle = FontStyle.Italic
@@ -1164,7 +1164,7 @@ fun MarkdownEditorArea(
                 decorationBox = { innerTextField ->
                     if (textFieldValueState.text.isEmpty()) {
                         Text(
-                            "Comienza a escribir tu nota usando formato Markdown...",
+                            stringResource(R.string.editor_placeholder),
                             style = TextStyle(
                                 fontFamily = preferences.selectedFont.fontFamily,
                                 fontSize = preferences.fontSizeSp.sp,

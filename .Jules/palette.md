@@ -14,3 +14,7 @@
 ## 2024-11-23 - Clear Input Accessibility and Interaction Pattern
 **Learning:** Added a trailing clear icon button to OutlinedTextField inputs inside dialogs (Create/Rename) for easier query deletion. Verified conditional rendering based on input state and added accessibility descriptions across all supported locales.
 **Action:** Remember to add `trailingIcon` clears for user-friendly text input fields in forms and dialogs.
+
+## 2026-07-17 - Duplicated UI components causing UX inconsistencies
+**Learning:** Discovered that `MainActivity.kt` contained duplicated UI components (`SidebarContent` and `MarkdownEditorArea`) that were missing recent localization/accessibility strings, whereas the correct files under `ui/components/` had them. The codebase has duplicated files that could lead to UX fragmentation, because fixes applied in one file may be missed in the other.
+**Action:** When applying UX or accessibility improvements, be aware of potentially duplicated composables in `MainActivity.kt` vs the `ui/components/` directory. Ensure string resources are used consistently everywhere rather than hardcoded text.
