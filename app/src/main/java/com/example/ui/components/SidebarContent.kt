@@ -38,6 +38,10 @@ import androidx.compose.ui.unit.sp
 import com.example.data.MarkdownDocument
 import android.content.Context
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.res.stringResource
 import com.example.R
 import com.example.ui.markdown.ReaderPreferences
@@ -61,6 +65,7 @@ fun SidebarContent(
     val textBgColor = Color(theme.hexCodeBg)
     val fgColor = Color(theme.hexForeground)
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     // Filter documents dynamically
     val filteredDocs = remember(documents, searchQuery) {
@@ -118,7 +123,7 @@ fun SidebarContent(
             value = searchQuery,
             onValueChange = onSearchChange,
             placeholder = { Text(stringResource(R.string.search_placeholder), fontSize = 12.sp, color = fgColor.copy(0.4f)) },
-            leadingIcon = { Icon(Icons.Default.Search, null, modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
+            leadingIcon = { Icon(Icons.Default.Search, stringResource(R.string.search_icon_description), modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
             trailingIcon = {
                 if (searchQuery.isNotEmpty()) {
                     IconButton(
@@ -144,6 +149,8 @@ fun SidebarContent(
                 focusedContainerColor = textBgColor.copy(alpha = 0.5f),
                 unfocusedContainerColor = textBgColor.copy(alpha = 0.5f)
             ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 12.dp)

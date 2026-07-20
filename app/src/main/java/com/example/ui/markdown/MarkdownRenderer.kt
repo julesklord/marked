@@ -404,7 +404,7 @@ fun MarkdownRenderer(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.ContentCopy,
-                                    contentDescription = "Copiar Código",
+                                    contentDescription = stringResource(R.string.copy_code),
                                     tint = accentColor,
                                     modifier = Modifier.size(14.dp)
                                 )

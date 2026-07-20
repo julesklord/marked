@@ -7,7 +7,9 @@
     <string name="edit_mode">Modo Edición</string>
     <string name="options">Opciones</string>
     <string name="search_placeholder">Buscar notas...</string>
+    <string name="search_icon_description">Buscar</string>
     <string name="clear_search">Borrar búsqueda</string>
+    <string name="clear_input">Borrar entrada</string>
     <string name="documents_header">DOCUMENTOS (%1$d)</string>
     <string name="no_documents_selected">No hay ningún documento seleccionado</string>
     <string name="create_or_open_templates">¡Crea un nuevo documento o abre las plantillas de bienvenida!</string>
@@ -27,6 +29,8 @@
     <string name="export_pdf">Exportar como PDF</string>
     <string name="delete_note">Eliminar nota</string>
     <string name="code_copied">Código copiado</string>
+    <string name="copy_code">Copiar código</string>
+    <string name="empty_notes_icon">Notas vacías</string>
     <string name="html_saved_downloads">Archivo guardado en Descargas: %1$s</string>
     <string name="html_save_error">Error al guardar el HTML: %1$s</string>
     <string name="html_saved_cache">Guardado en caché de la app debido a restricciones de almacenamiento</string>

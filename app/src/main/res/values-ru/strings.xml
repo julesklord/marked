@@ -7,7 +7,9 @@
     <string name="edit_mode">Режим редактирования</string>
     <string name="options">Настройки</string>
     <string name="search_placeholder">Поиск заметок...</string>
+    <string name="search_icon_description">Поиск</string>
     <string name="clear_search">Очистить поиск</string>
+    <string name="clear_input">Очистить ввод</string>
     <string name="documents_header">ДОКУМЕНТЫ (%1$d)</string>
     <string name="no_documents_selected">Документ не выбран</string>
     <string name="create_or_open_templates">Создайте новый документ или откройте приветственные шаблоны!</string>
@@ -27,6 +29,8 @@
     <string name="export_pdf">Экспорт в PDF</string>
     <string name="delete_note">Удалить заметку</string>
     <string name="code_copied">Код скопирован</string>
+    <string name="copy_code">Копировать код</string>
+    <string name="empty_notes_icon">Пустые заметки</string>
     <string name="html_saved_downloads">Файл сохранен в Загрузки: %1$s</string>
     <string name="html_save_error">Ошибка при сохранении HTML: %1$s</string>
     <string name="html_saved_cache">Сохранено во внутренний кэш из-за ограничений хранилища</string>

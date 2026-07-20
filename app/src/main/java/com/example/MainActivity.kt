@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.FactCheck
@@ -37,13 +38,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
@@ -127,6 +129,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+        val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
     var isMobileSidebarOpen by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf<MarkdownDocument?>(null) }
@@ -220,7 +223,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             IconButton(onClick = {}) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                                    contentDescription = null,
+                                    contentDescription = stringResource(R.string.folder_notes),
                                     tint = accentColor
                                 )
                             }
@@ -274,7 +277,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.DriveFileRenameOutline,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.rename_note),
                                                 tint = accentColor
                                             )
                                         },
@@ -288,7 +291,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Download,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.export_html),
                                                 tint = accentColor
                                             )
                                         },
@@ -304,7 +307,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Print,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.export_pdf),
                                                 tint = accentColor
                                             )
                                         },
@@ -320,7 +323,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Delete,
-                                                contentDescription = null,
+                                                contentDescription = stringResource(R.string.delete_note),
                                                 tint = MaterialTheme.colorScheme.error
                                             )
                                         },
@@ -363,7 +366,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.Notes,
-                                contentDescription = "Vacío",
+                                contentDescription = stringResource(R.string.empty_notes_icon),
                                 tint = accentColor.copy(alpha = 0.3f),
                                 modifier = Modifier.size(96.dp)
                             )
@@ -386,7 +389,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 onClick = { showCreateDialog = true },
                                 colors = ButtonDefaults.buttonColors(containerColor = accentColor)
                             ) {
-                                Icon(Icons.Default.Add, contentDescription = null)
+                                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.new_document))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(stringResource(R.string.new_document), color = Color(theme.hexBackground))
                             }
@@ -680,6 +683,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
         // CREATE NOTE DIALOG
         if (showCreateDialog) {
             var inputTitle by remember { mutableStateOf("") }
+            val isInputValid = inputTitle.isNotBlank()
             val focusRequester = remember { FocusRequester() }
             AlertDialog(
                 onDismissRequest = { showCreateDialog = false },
@@ -703,6 +707,13 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                if (isInputValid) {
+                                    viewModel.createNewDocument(inputTitle.trim())
+                                    showCreateDialog = false
+                                }
+                            }),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
@@ -713,10 +724,17 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            viewModel.createNewDocument(inputTitle.trim())
-                            showCreateDialog = false
+                            if (isInputValid) {
+                                viewModel.createNewDocument(inputTitle.trim())
+                                showCreateDialog = false
+                            }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        enabled = isInputValid,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = accentColor,
+                            disabledContainerColor = accentColor.copy(alpha = 0.5f),
+                            disabledContentColor = Color(theme.hexBackground).copy(alpha = 0.5f)
+                        ),
                         modifier = Modifier.testTag("confirm_create_button")
                     ) {
                         Text(stringResource(R.string.btn_create), color = Color(theme.hexBackground))
@@ -738,6 +756,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
         if (showRenameDialog != null) {
             val docToRename = showRenameDialog!!
             var inputTitle by remember { mutableStateOf(docToRename.title) }
+            val isInputValid = inputTitle.isNotBlank()
             val focusRequester = remember { FocusRequester() }
             AlertDialog(
                 onDismissRequest = { showRenameDialog = null },
@@ -754,6 +773,13 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                if (isInputValid) {
+                                    viewModel.renameDocument(docToRename.id, inputTitle.trim())
+                                    showRenameDialog = null
+                                }
+                            }),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
@@ -764,10 +790,17 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            viewModel.renameDocument(docToRename.id, inputTitle.trim())
-                            showRenameDialog = null
+                            if (isInputValid) {
+                                viewModel.renameDocument(docToRename.id, inputTitle.trim())
+                                showRenameDialog = null
+                            }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        enabled = isInputValid,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = accentColor,
+                            disabledContainerColor = accentColor.copy(alpha = 0.5f),
+                            disabledContentColor = Color(theme.hexBackground).copy(alpha = 0.5f)
+                        ),
                         modifier = Modifier.testTag("confirm_rename_button")
                     ) {
                         Text(stringResource(R.string.btn_save), color = Color(theme.hexBackground))
@@ -834,6 +867,7 @@ fun SidebarContent(
     val accentColor = Color(theme.hexAccent)
     val textBgColor = Color(theme.hexCodeBg)
     val fgColor = Color(theme.hexForeground)
+    val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
 
     // Filter documents dynamically
     val filteredDocs = remember(documents, searchQuery) {
@@ -890,8 +924,20 @@ fun SidebarContent(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = onSearchChange,
-            placeholder = { Text("Buscar notas...", fontSize = 12.sp, color = fgColor.copy(0.4f)) },
-            leadingIcon = { Icon(Icons.Default.Search, null, modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
+            placeholder = { Text(stringResource(R.string.search_placeholder), fontSize = 12.sp, color = fgColor.copy(0.4f)) },
+            leadingIcon = { Icon(Icons.Default.Search, stringResource(R.string.search_icon_description), modifier = Modifier.size(16.dp), tint = fgColor.copy(0.4f)) },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { onSearchChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(R.string.clear_search),
+                            tint = fgColor.copy(0.4f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            },
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
@@ -902,6 +948,8 @@ fun SidebarContent(
                 focusedContainerColor = textBgColor.copy(alpha = 0.5f),
                 unfocusedContainerColor = textBgColor.copy(alpha = 0.5f)
             ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 12.dp)
@@ -931,7 +979,7 @@ fun SidebarContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.AddCircle,
-                    contentDescription = "Crear Nuevo",
+                    contentDescription = stringResource(R.string.new_document),
                     tint = accentColor
                 )
             }
@@ -946,7 +994,7 @@ fun SidebarContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Archivos no encontrados",
+                    stringResource(R.string.words_not_found),
                     fontSize = 12.sp,
                     color = fgColor.copy(alpha = 0.4f),
                     fontStyle = FontStyle.Italic
@@ -1012,7 +1060,7 @@ fun SidebarContent(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.DriveFileRenameOutline,
-                                            contentDescription = "Renombrar",
+                                            contentDescription = stringResource(R.string.rename_note),
                                             tint = fgColor.copy(alpha = 0.3f),
                                             modifier = Modifier.size(12.dp)
                                         )
@@ -1024,7 +1072,7 @@ fun SidebarContent(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Delete,
-                                            contentDescription = "Borrar",
+                                            contentDescription = stringResource(R.string.delete_note),
                                             tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
                                             modifier = Modifier.size(12.dp)
                                         )
@@ -1065,6 +1113,7 @@ fun MarkdownEditorArea(
     val bgColor = Color(theme.hexBackground)
     val textBgColor = Color(theme.hexCodeBg)
     val fgColor = Color(theme.hexForeground)
+    val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
     val accentColor = Color(theme.hexAccent)
 
     // Using a stateful TextFieldValue to preserve cursor position when formatting
@@ -1115,7 +1164,7 @@ fun MarkdownEditorArea(
                 decorationBox = { innerTextField ->
                     if (textFieldValueState.text.isEmpty()) {
                         Text(
-                            "Comienza a escribir tu nota usando formato Markdown...",
+                            stringResource(R.string.editor_placeholder),
                             style = TextStyle(
                                 fontFamily = preferences.selectedFont.fontFamily,
                                 fontSize = preferences.fontSizeSp.sp,

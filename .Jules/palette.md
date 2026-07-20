@@ -1,3 +1,24 @@
+## 2024-11-20 - Clear Search Icon Accessibility and Interaction Pattern
+**Learning:** Found an interaction improvement opportunity in `SidebarContent.kt` where the search bar lacked a way to easily clear the search text. Adding a trailing clear icon that only appears when text is entered improves the user experience by reducing the effort to clear a long search query. Also ensured it had a proper `contentDescription` for accessibility.
+**Action:** When adding search bars in Jetpack Compose, always consider adding a trailing clear icon button for better UX, and ensure it's accessible with a localized content description.
+## 2024-06-25 - Dialogue Interaction Improvements
+**Learning:** We realized that users often fail to notice whether a text input in a dialog modal is empty, causing confusing invalid states when creating or renaming notes. We also saw that missing an `ImeAction.Done` handler broke expected keyboard submit behaviors.
+**Action:** Always add empty state handlers to disable the confirm button if the text input is missing. Further, provide an IME action `KeyboardOptions(imeAction = ImeAction.Done)` with an associated `KeyboardActions` handler to submit on "Enter" out of the box.
+## 2025-02-12 - Accessibility labels for Jetpack Compose Icons\n**Learning:** When adding accessibility descriptions (like contentDescription for icons) in a multi-language Android app, always ensure new string resources are translated in all values-* directories (e.g., pt, ru, zh) to prevent build-time linting errors (MissingTranslation).\n**Action:** Add translations across all locales when introducing new strings for accessibility.
+## 2024-05-18 - Accessibility labels for Jetpack Compose Icons (Search)
+**Learning:** Found an accessibility opportunity in `MainActivity.kt` and `SidebarContent.kt` where the search icon inside the OutlinedTextField lacked a `contentDescription`. Providing a localized string resource for the icon's description improves screen reader experience. Always ensure translations for the new string resource are added across all supported locales (values-* directories) to avoid lint errors.
+**Action:** When adding icons to Compose UIs, always include an appropriate localized `contentDescription`.
+## 2025-02-23 - Submit Search Action Accessibility and Interaction Pattern
+**Learning:** Found an interaction improvement opportunity in the Search bar implementations (`SidebarContent.kt` and `MainActivity.kt`). Adding `keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)` and `keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() })` improves the UX by explicitly handling the keyboard search action instead of leaving it as a newline or unhandled action. This ensures the keyboard dismisses when the user executes a search intent.
+**Action:** Always add appropriate `KeyboardOptions` and `KeyboardActions` (e.g., `ImeAction.Search`, `ImeAction.Done`) for inputs to provide expected mobile keyboard interactions.
+## 2024-11-23 - Clear Input Accessibility and Interaction Pattern
+**Learning:** Added a trailing clear icon button to OutlinedTextField inputs inside dialogs (Create/Rename) for easier query deletion. Verified conditional rendering based on input state and added accessibility descriptions across all supported locales.
+**Action:** Remember to add `trailingIcon` clears for user-friendly text input fields in forms and dialogs.
+
+## 2026-07-17 - Duplicated UI components causing UX inconsistencies
+**Learning:** Discovered that `MainActivity.kt` contained duplicated UI components (`SidebarContent` and `MarkdownEditorArea`) that were missing recent localization/accessibility strings, whereas the correct files under `ui/components/` had them. The codebase has duplicated files that could lead to UX fragmentation, because fixes applied in one file may be missed in the other.
+**Action:** When applying UX or accessibility improvements, be aware of potentially duplicated composables in `MainActivity.kt` vs the `ui/components/` directory. Ensure string resources are used consistently everywhere rather than hardcoded text.
+
 ## 2024-05-18 - Compose Search Bar UX
 **Learning:** Found that the app's `OutlinedTextField` used for searching documents lacks a clear way to reset the search string quickly. This is a common accessibility/UX pitfall, especially for mobile users where backspacing a long string is tedious.
 **Action:** Implemented a conditionally visible clear icon (`trailingIcon`) in `OutlinedTextField` when the text is not empty. This pattern should be standard for all search inputs in this design system.

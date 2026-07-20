@@ -5,9 +5,12 @@
     <string name="folder_notes">Pasta de notas</string>
     <string name="read_mode">Modo de Leitura</string>
     <string name="edit_mode">Modo de Edição</string>
-    <string name="options">Opções</string>
     <string name="search_placeholder">Buscar notas...</string>
-    <string name="clear_search">Limpar busca</string>
+    <string name="options">Opções</string>
+    <string name="search_icon_description">Buscar</string>
+
+    <string name="clear_search">Limpar pesquisa</string>
+    <string name="clear_input">Limpar entrada</string>
     <string name="documents_header">DOCUMENTOS (%1$d)</string>
     <string name="no_documents_selected">Nenhum documento selecionado</string>
     <string name="create_or_open_templates">Crie um novo documento ou abra os modelos de boas-vindas!</string>
@@ -27,6 +30,8 @@
     <string name="export_pdf">Exportar como PDF</string>
     <string name="delete_note">Excluir nota</string>
     <string name="code_copied">Código copiado</string>
+    <string name="copy_code">Copiar código</string>
+    <string name="empty_notes_icon">Notas vazias</string>
     <string name="html_saved_downloads">Arquivo salvo em Downloads: %1$s</string>
     <string name="html_save_error">Erro ao salvar HTML: %1$s</string>
     <string name="html_saved_cache">Salvo no cache do aplicativo devido a restrições de armazenamento</string>

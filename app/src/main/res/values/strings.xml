@@ -7,7 +7,9 @@
     <string name="edit_mode">Editing Mode</string>
     <string name="options">Options</string>
     <string name="search_placeholder">Search notes...</string>
+    <string name="search_icon_description">Search</string>
     <string name="clear_search">Clear search</string>
+    <string name="clear_input">Clear input</string>
     <string name="documents_header">DOCUMENTS (%1$d)</string>
     <string name="no_documents_selected">No document selected</string>
     <string name="create_or_open_templates">Create a new document or open the welcome templates!</string>
@@ -27,6 +29,8 @@
     <string name="export_pdf">Export as PDF</string>
     <string name="delete_note">Delete note</string>
     <string name="code_copied">Code copied</string>
+    <string name="copy_code">Copy code</string>
+    <string name="empty_notes_icon">Empty notes</string>
     <string name="html_saved_downloads">File saved to Downloads: %1$s</string>
     <string name="html_save_error">Error saving HTML: %1$s</string>
     <string name="html_saved_cache">Saved to app cache due to storage restrictions</string>
