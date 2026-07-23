@@ -700,6 +700,17 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             value = inputTitle,
                             onValueChange = { inputTitle = it },
                             placeholder = { Text(stringResource(R.string.create_dialog_placeholder)) },
+                            trailingIcon = {
+                                if (inputTitle.isNotEmpty()) {
+                                    IconButton(onClick = { inputTitle = "" }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = stringResource(R.string.clear_input),
+                                            tint = fgColor.copy(alpha = 0.6f)
+                                        )
+                                    }
+                                }
+                            },
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = fgColor,
@@ -766,6 +777,17 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         OutlinedTextField(
                             value = inputTitle,
                             onValueChange = { inputTitle = it },
+                            trailingIcon = {
+                                if (inputTitle.isNotEmpty()) {
+                                    IconButton(onClick = { inputTitle = "" }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = stringResource(R.string.clear_input),
+                                            tint = fgColor.copy(alpha = 0.6f)
+                                        )
+                                    }
+                                }
+                            },
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = fgColor,
