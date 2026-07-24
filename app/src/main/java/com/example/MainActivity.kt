@@ -926,6 +926,7 @@ fun SidebarContent(
     val fgColor = Color(theme.hexForeground)
     val context = LocalContext.current
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
+    val context = LocalContext.current
 
     // Filter documents dynamically
     val filteredDocs = remember(documents, searchQuery) {
