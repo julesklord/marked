@@ -1,5 +1,6 @@
 package com.example
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -889,6 +890,7 @@ fun SidebarContent(
     val accentColor = Color(theme.hexAccent)
     val textBgColor = Color(theme.hexCodeBg)
     val fgColor = Color(theme.hexForeground)
+    val context = LocalContext.current
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
 
     // Filter documents dynamically
@@ -935,7 +937,7 @@ fun SidebarContent(
                     letterSpacing = 0.5.sp
                 )
                 Text(
-                    "Lector y editor ligero",
+                    stringResource(R.string.app_subtitle),
                     fontSize = 10.sp,
                     color = fgColor.copy(alpha = 0.5f)
                 )
@@ -987,7 +989,7 @@ fun SidebarContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "DOCUMENTOS (${filteredDocs.size})",
+                stringResource(R.string.documents_header, filteredDocs.size),
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
                 color = fgColor.copy(alpha = 0.4f),
@@ -1107,12 +1109,12 @@ fun SidebarContent(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "$wordCount palabras",
+                                    text = stringResource(R.string.word_count, wordCount),
                                     fontSize = 11.sp,
                                     color = if (isSelected && theme == ReaderTheme.IMMERSIVE_UI) Color(0xFFD1E4FF).copy(alpha = 0.7f) else fgColor.copy(alpha = 0.4f)
                                 )
                                 Text(
-                                    text = formatRelativeTime(doc.updatedAt),
+                                    text = formatRelativeTime(context, doc.updatedAt),
                                     fontSize = 10.sp,
                                     color = if (isSelected && theme == ReaderTheme.IMMERSIVE_UI) Color(0xFF004786).copy(alpha = 0.0f).run { Color(0xFFD1E4FF).copy(alpha = 0.7f) } else fgColor.copy(alpha = 0.4f)
                                 )
@@ -1259,55 +1261,55 @@ fun MarkdownEditorArea(
             // Quick Format Buttons
             FormatToolbarButton(
                 icon = Icons.Default.FormatBold,
-                label = "Negrita",
+                label = stringResource(R.string.tb_bold),
                 theme = theme,
                 onClick = { insertFormatSymbol("**", "**") }
             )
             FormatToolbarButton(
                 icon = Icons.Default.FormatItalic,
-                label = "Itálica",
+                label = stringResource(R.string.tb_italic),
                 theme = theme,
                 onClick = { insertFormatSymbol("*", "*") }
             )
             FormatToolbarButton(
                 icon = Icons.Default.Title,
-                label = "Título",
+                label = stringResource(R.string.tb_title),
                 theme = theme,
                 onClick = { insertFormatSymbol("\n# ", "\n") }
             )
             FormatToolbarButton(
                 icon = Icons.Default.Code,
-                label = "Código",
+                label = stringResource(R.string.tb_code),
                 theme = theme,
                 onClick = { insertFormatSymbol("\n```kotlin\n", "\n```\n") }
             )
             FormatToolbarButton(
                 icon = Icons.AutoMirrored.Filled.FormatListBulleted,
-                label = "Ítem",
+                label = stringResource(R.string.tb_item),
                 theme = theme,
                 onClick = { insertFormatSymbol("\n- ", "\n") }
             )
             FormatToolbarButton(
                 icon = Icons.AutoMirrored.Filled.FactCheck,
-                label = "Tarea",
+                label = stringResource(R.string.tb_task),
                 theme = theme,
                 onClick = { insertFormatSymbol("\n- [ ] ", "\n") }
             )
             FormatToolbarButton(
                 icon = Icons.Default.Link,
-                label = "Enlace",
+                label = stringResource(R.string.tb_link),
                 theme = theme,
                 onClick = { insertFormatSymbol("[", "](https://)") }
             )
             FormatToolbarButton(
                 icon = Icons.Default.FormatQuote,
-                label = "Cita",
+                label = stringResource(R.string.tb_quote),
                 theme = theme,
                 onClick = { insertFormatSymbol("\n> ", "\n") }
             )
             FormatToolbarButton(
                 icon = Icons.Default.HorizontalRule,
-                label = "Línea",
+                label = stringResource(R.string.tb_line),
                 theme = theme,
                 onClick = { insertFormatSymbol("\n---\n", "") }
             )
@@ -1317,7 +1319,6 @@ fun MarkdownEditorArea(
 
 @Composable
 fun FormatToolbarButton(
-    imageVector: androidx.compose.ui.graphics.vector.ImageVector? = null,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
     theme: ReaderTheme,
@@ -1353,16 +1354,16 @@ fun FormatToolbarButton(
     }
 }
 
-private fun formatRelativeTime(timestamp: Long): String {
+private fun formatRelativeTime(context: Context, timestamp: Long): String {
     val diff = System.currentTimeMillis() - timestamp
-    if (diff < 0) return "Ahora"
+    if (diff < 0) return context.getString(R.string.time_now)
     val sec = diff / 1000
-    if (sec < 60) return "Hace un momento"
+    if (sec < 60) return context.getString(R.string.time_moment)
     val min = sec / 60
-    if (min < 60) return "Hace $min min"
+    if (min < 60) return context.getString(R.string.time_min, min.toInt())
     val hr = min / 60
-    if (hr < 24) return "Hace $hr hr"
+    if (hr < 24) return context.getString(R.string.time_hr, hr.toInt())
     val days = hr / 24
-    if (days < 7) return "Hace $days días"
+    if (days < 7) return context.getString(R.string.time_days, days.toInt())
     return java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(timestamp)
 }
