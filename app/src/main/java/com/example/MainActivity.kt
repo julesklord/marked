@@ -221,10 +221,10 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 )
                             }
                         } else {
-                            IconButton(onClick = {}) {
+                            Box(modifier = Modifier.padding(12.dp)) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                                    contentDescription = stringResource(R.string.folder_notes),
+                                    contentDescription = null, // decorative in tablet view
                                     tint = accentColor
                                 )
                             }

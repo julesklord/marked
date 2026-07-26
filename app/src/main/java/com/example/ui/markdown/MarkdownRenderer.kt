@@ -35,6 +35,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -263,13 +265,17 @@ fun MarkdownRenderer(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(8.dp))
-                                    .clickable { onToggleChecklist(item.lineIndex) }
+                                    .toggleable(
+                                        value = item.isChecked,
+                                        role = Role.Checkbox,
+                                        onValueChange = { onToggleChecklist(item.lineIndex) }
+                                    )
                                     .padding(horizontal = 6.dp, vertical = 2.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Checkbox(
                                     checked = item.isChecked,
-                                    onCheckedChange = { onToggleChecklist(item.lineIndex) },
+                                    onCheckedChange = null, // handled by Row's toggleable
                                     colors = CheckboxDefaults.colors(
                                         checkedColor = accentColor,
                                         checkmarkColor = bgColor
