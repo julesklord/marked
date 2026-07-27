@@ -21,3 +21,8 @@
 ## 2026-07-25 - Extracted hardcoded UI strings into localized resources
 **Learning:** Found an accessibility opportunity where hardcoded strings in `MainActivity.kt` (used in UI labels, toolbar buttons, and accessibility tags) were not matching the localized implementation under `ui/components/`. Extracting all these texts using `stringResource` improves UX, ensures language consistency for international users, and provides proper labels for screen readers.
 **Action:** When working in Android files like `MainActivity.kt`, never leave user-visible strings hardcoded. Always map them to the proper string references defined in `res/values*/strings.xml` to ensure localization and accessibility standards are met.
+## 2024-11-20 - Jetpack Compose Checkbox and Icon Accessibility Patterns
+**Learning:** Found two accessibility patterns in Jetpack Compose:
+1. When building interactive list items (like a task list), using `.clickable` on the parent row and `onCheckedChange` on the inner Checkbox causes a double ripple effect and confusing screen reader announcements. Using `.toggleable(value, role = Role.Checkbox, onValueChange)` on the row and `onCheckedChange = null` on the checkbox provides clean semantics and interaction.
+2. In responsive layouts, keeping an `IconButton` with a no-op click handler just for decorative purposes creates an accessibility anti-pattern (screen readers announce a button that does nothing). It's better to use a non-interactive `Box` with the `Icon`'s `contentDescription = null` for decorative icons.
+**Action:** Use `.toggleable` with `Role.Checkbox` for custom checkbox rows, and avoid no-op `IconButton`s for decorative icons by using `Box` and `null` content descriptions instead.
