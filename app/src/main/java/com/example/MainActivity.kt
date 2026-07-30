@@ -1340,7 +1340,7 @@ fun FormatToolbarButton(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = label,
+            contentDescription = null, // decorative in button with label text
             tint = accentColor,
             modifier = Modifier.size(16.dp)
         )
