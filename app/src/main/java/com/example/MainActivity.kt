@@ -278,7 +278,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.DriveFileRenameOutline,
-                                                contentDescription = stringResource(R.string.rename_note),
+                                                contentDescription = null,
                                                 tint = accentColor
                                             )
                                         },
@@ -292,7 +292,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Download,
-                                                contentDescription = stringResource(R.string.export_html),
+                                                contentDescription = null,
                                                 tint = accentColor
                                             )
                                         },
@@ -308,7 +308,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Print,
-                                                contentDescription = stringResource(R.string.export_pdf),
+                                                contentDescription = null,
                                                 tint = accentColor
                                             )
                                         },
@@ -324,7 +324,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Default.Delete,
-                                                contentDescription = stringResource(R.string.delete_note),
+                                                contentDescription = null,
                                                 tint = MaterialTheme.colorScheme.error
                                             )
                                         },
@@ -390,7 +390,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 onClick = { showCreateDialog = true },
                                 colors = ButtonDefaults.buttonColors(containerColor = accentColor)
                             ) {
-                                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.new_document))
+                                Icon(Icons.Default.Add, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(stringResource(R.string.new_document), color = Color(theme.hexBackground))
                             }
