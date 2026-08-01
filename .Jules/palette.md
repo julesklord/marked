@@ -29,3 +29,6 @@
 ## 2024-11-20 - Redundant Accessibility Labels for Icons
 **Learning:** Found an accessibility issue where an `Icon` and its adjacent `Text` label inside a button (`FormatToolbarButton`) were both providing the same label, causing screen readers to read the same information twice (e.g. "Bold, Bold").
 **Action:** When creating components with both an `Icon` and `Text`, and the text acts as a visible label for the action, set the `Icon`'s `contentDescription` to `null` to mark it as decorative. This prevents redundant screen reader announcements.
+## 2025-05-18 - Redundant Accessibility Labels for Icons in Dropdowns and Buttons
+**Learning:** Found an accessibility issue where an `Icon` and its adjacent `Text` label inside a `DropdownMenuItem` or generic `Button` (e.g., "New Document" empty state) were both providing the same label, causing screen readers to read the same information twice.
+**Action:** When creating components with both an `Icon` and `Text`, and the text acts as a visible label for the action, set the `Icon`'s `contentDescription` to `null` to mark it as decorative. This prevents redundant screen reader announcements.
