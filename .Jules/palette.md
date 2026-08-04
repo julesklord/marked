@@ -35,3 +35,6 @@
 ## 2026-08-03 - Crossfade State Transitions
 **Learning:** Found an interaction improvement opportunity in `MainActivity.kt`. The UI would abruptly snap between the empty state, read mode, and edit mode. Wrapping these main state branches in `androidx.compose.animation.Crossfade` provides a smooth visual transition, greatly enhancing the application's premium feel with minimal code.
 **Action:** When conditionally swapping large UI components in Jetpack Compose based on state (like mode toggles or item selection), consider wrapping them in `Crossfade` and passing the state as the `targetState` to ensure smooth transitions.
+## 2026-08-04 - Empty State Call-to-Action Pattern
+**Learning:** Found a UX opportunity in the sidebar document list (`SidebarContent.kt` and `MainActivity.kt`). When the list of documents or the search result is empty, the user simply saw a "No notes found" text message, leading to a dead end. By adding a clear "New Document" button when there are no notes, and a "Clear search" button when a search yields no results, we create a helpful and actionable empty state.
+**Action:** When designing lists or search interfaces in Jetpack Compose, never leave the user at a dead end. Always accompany empty states with an actionable `Button` or `TextButton` (like "Clear Search" or "Create New") to help the user recover.
