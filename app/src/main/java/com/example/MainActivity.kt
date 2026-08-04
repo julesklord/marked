@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.animation.Crossfade
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -356,70 +357,73 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         .fillMaxSize()
                         .weight(1f)
                 ) {
-                    if (selectedDoc == null) {
-                        // Empty launch screen view
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(32.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Notes,
-                                contentDescription = stringResource(R.string.empty_notes_icon),
-                                tint = accentColor.copy(alpha = 0.3f),
-                                modifier = Modifier.size(96.dp)
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                stringResource(R.string.no_documents_selected),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = fgColor.copy(alpha = 0.8f)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                stringResource(R.string.create_or_open_templates),
-                                fontSize = 14.sp,
-                                color = fgColor.copy(alpha = 0.5f),
-                                style = TextStyle(fontStyle = FontStyle.Italic)
-                            )
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Button(
-                                onClick = { showCreateDialog = true },
-                                colors = ButtonDefaults.buttonColors(containerColor = accentColor)
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(stringResource(R.string.new_document), color = Color(theme.hexBackground))
-                            }
-                        }
-                    } else {
-                        val activeDoc = selectedDoc!!
-
-                        if (isEditMode) {
-                            // High Custom Markdown raw editor with fast editing shortcuts
-                            MarkdownEditorArea(
-                                document = activeDoc,
-                                preferences = preferences,
-                                onContentChange = { viewModel.updateDocumentContent(it) }
-                            )
-                        } else {
-                            // High Quality document reader
+                    Crossfade(
+                        targetState = Pair(selectedDoc, isEditMode),
+                        label = "Workspace Mode Transition"
+                    ) { (currentDoc, currentIsEditMode) ->
+                        if (currentDoc == null) {
+                            // Empty launch screen view
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .verticalScroll(rememberScrollState())
+                                    .padding(32.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                MarkdownRenderer(
-                                    content = activeDoc.content,
-                                    preferences = preferences,
-                                    onToggleChecklist = { lineIndex ->
-                                        viewModel.toggleChecklistItem(lineIndex)
-                                    }
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Notes,
+                                    contentDescription = stringResource(R.string.empty_notes_icon),
+                                    tint = accentColor.copy(alpha = 0.3f),
+                                    modifier = Modifier.size(96.dp)
                                 )
-                                Spacer(modifier = Modifier.height(64.dp)) // Floating back-layer space
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    stringResource(R.string.no_documents_selected),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = fgColor.copy(alpha = 0.8f)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    stringResource(R.string.create_or_open_templates),
+                                    fontSize = 14.sp,
+                                    color = fgColor.copy(alpha = 0.5f),
+                                    style = TextStyle(fontStyle = FontStyle.Italic)
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Button(
+                                    onClick = { showCreateDialog = true },
+                                    colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+                                ) {
+                                    Icon(Icons.Default.Add, contentDescription = null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(R.string.new_document), color = Color(theme.hexBackground))
+                                }
+                            }
+                        } else {
+                            if (currentIsEditMode) {
+                                // High Custom Markdown raw editor with fast editing shortcuts
+                                MarkdownEditorArea(
+                                    document = currentDoc,
+                                    preferences = preferences,
+                                    onContentChange = { viewModel.updateDocumentContent(it) }
+                                )
+                            } else {
+                                // High Quality document reader
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .verticalScroll(rememberScrollState())
+                                ) {
+                                    MarkdownRenderer(
+                                        content = currentDoc.content,
+                                        preferences = preferences,
+                                        onToggleChecklist = { lineIndex ->
+                                            viewModel.toggleChecklistItem(lineIndex)
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.height(64.dp)) // Floating back-layer space
+                                }
                             }
                         }
                     }

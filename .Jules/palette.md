@@ -32,3 +32,6 @@
 ## 2025-05-18 - Redundant Accessibility Labels for Icons in Dropdowns and Buttons
 **Learning:** Found an accessibility issue where an `Icon` and its adjacent `Text` label inside a `DropdownMenuItem` or generic `Button` (e.g., "New Document" empty state) were both providing the same label, causing screen readers to read the same information twice.
 **Action:** When creating components with both an `Icon` and `Text`, and the text acts as a visible label for the action, set the `Icon`'s `contentDescription` to `null` to mark it as decorative. This prevents redundant screen reader announcements.
+## 2026-08-03 - Crossfade State Transitions
+**Learning:** Found an interaction improvement opportunity in `MainActivity.kt`. The UI would abruptly snap between the empty state, read mode, and edit mode. Wrapping these main state branches in `androidx.compose.animation.Crossfade` provides a smooth visual transition, greatly enhancing the application's premium feel with minimal code.
+**Action:** When conditionally swapping large UI components in Jetpack Compose based on state (like mode toggles or item selection), consider wrapping them in `Crossfade` and passing the state as the `targetState` to ensure smooth transitions.
