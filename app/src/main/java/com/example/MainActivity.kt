@@ -1015,11 +1015,12 @@ fun SidebarContent(
 
         // Document item List
         if (filteredDocs.isEmpty()) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                contentAlignment = Alignment.Center
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     stringResource(R.string.words_not_found),
@@ -1027,6 +1028,16 @@ fun SidebarContent(
                     color = fgColor.copy(alpha = 0.4f),
                     fontStyle = FontStyle.Italic
                 )
+                Spacer(modifier = Modifier.height(12.dp))
+                if (searchQuery.isNotEmpty()) {
+                    androidx.compose.material3.TextButton(onClick = { onSearchChange("") }) {
+                        Text(stringResource(R.string.clear_search), color = accentColor)
+                    }
+                } else {
+                    androidx.compose.material3.TextButton(onClick = onCreateNew) {
+                        Text(stringResource(R.string.new_document), color = accentColor)
+                    }
+                }
             }
         } else {
             LazyColumn(
