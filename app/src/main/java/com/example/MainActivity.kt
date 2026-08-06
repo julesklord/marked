@@ -50,6 +50,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.animation.Crossfade
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -234,28 +238,43 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                     actions = {
                         // Edit / Read Toggle Switch
                         if (selectedDoc != null) {
-                            IconButton(
-                                onClick = { viewModel.setEditMode(!isEditMode) },
-                                modifier = Modifier.testTag("toggle_edit_mode_button")
+                            val toggleMsg = if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode)
+                            @OptIn(ExperimentalMaterial3Api::class)
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                tooltip = { PlainTooltip { Text(toggleMsg) } },
+                                state = rememberTooltipState()
                             ) {
-                                Icon(
-                                    imageVector = if (isEditMode) Icons.Default.Book else Icons.Default.Edit,
-                                    contentDescription = if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode),
-                                    tint = accentColor
-                                )
+                                IconButton(
+                                    onClick = { viewModel.setEditMode(!isEditMode) },
+                                    modifier = Modifier.testTag("toggle_edit_mode_button")
+                                ) {
+                                    Icon(
+                                        imageVector = if (isEditMode) Icons.Default.Book else Icons.Default.Edit,
+                                        contentDescription = toggleMsg,
+                                        tint = accentColor
+                                    )
+                                }
                             }
                         }
 
                         // Reading config settings
-                        IconButton(
-                            onClick = { showSettingsSheet = true },
-                            modifier = Modifier.testTag("configure_font_button")
+                        @OptIn(ExperimentalMaterial3Api::class)
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            tooltip = { PlainTooltip { Text(stringResource(R.string.pref_dialog_title)) } },
+                            state = rememberTooltipState()
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.TextFormat,
-                                contentDescription = stringResource(R.string.pref_dialog_title),
-                                tint = fgColor.copy(alpha = 0.8f)
-                            )
+                            IconButton(
+                                onClick = { showSettingsSheet = true },
+                                modifier = Modifier.testTag("configure_font_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.TextFormat,
+                                    contentDescription = stringResource(R.string.pref_dialog_title),
+                                    tint = fgColor.copy(alpha = 0.8f)
+                                )
+                            }
                         }
 
                         // More Action options
