@@ -38,3 +38,7 @@
 ## 2026-08-04 - Empty State Call-to-Action Pattern
 **Learning:** Found a UX opportunity in the sidebar document list (`SidebarContent.kt` and `MainActivity.kt`). When the list of documents or the search result is empty, the user simply saw a "No notes found" text message, leading to a dead end. By adding a clear "New Document" button when there are no notes, and a "Clear search" button when a search yields no results, we create a helpful and actionable empty state.
 **Action:** When designing lists or search interfaces in Jetpack Compose, never leave the user at a dead end. Always accompany empty states with an actionable `Button` or `TextButton` (like "Clear Search" or "Create New") to help the user recover.
+
+## 2026-08-08 - Added Tooltips to TopAppBar IconButtons
+**Learning:** Found an accessibility improvement in `MainActivity.kt`. Adding tooltips to icon-only buttons on the top app bar using `TooltipBox` enhances the user experience by providing a text description when users long-press the buttons.
+**Action:** Always wrap icon-only buttons with `TooltipBox` in Jetpack Compose to provide textual descriptions for better accessibility and UX.
