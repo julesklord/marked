@@ -211,15 +211,21 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                     },
                     navigationIcon = {
                         if (!isTablet) {
-                            IconButton(
-                                onClick = { isMobileSidebarOpen = !isMobileSidebarOpen },
-                                modifier = Modifier.testTag("menu_sidebar_button")
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                tooltip = { PlainTooltip { Text(stringResource(R.string.folder_notes)) } },
+                                state = rememberTooltipState()
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Folder,
-                                    contentDescription = stringResource(R.string.folder_notes),
-                                    tint = accentColor
-                                )
+                                IconButton(
+                                    onClick = { isMobileSidebarOpen = !isMobileSidebarOpen },
+                                    modifier = Modifier.testTag("menu_sidebar_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Folder,
+                                        contentDescription = stringResource(R.string.folder_notes),
+                                        tint = accentColor
+                                    )
+                                }
                             }
                         } else {
                             Box(modifier = Modifier.padding(12.dp)) {
@@ -234,40 +240,58 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                     actions = {
                         // Edit / Read Toggle Switch
                         if (selectedDoc != null) {
-                            IconButton(
-                                onClick = { viewModel.setEditMode(!isEditMode) },
-                                modifier = Modifier.testTag("toggle_edit_mode_button")
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                tooltip = { PlainTooltip { Text(if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode)) } },
+                                state = rememberTooltipState()
                             ) {
-                                Icon(
-                                    imageVector = if (isEditMode) Icons.Default.Book else Icons.Default.Edit,
-                                    contentDescription = if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode),
-                                    tint = accentColor
-                                )
+                                IconButton(
+                                    onClick = { viewModel.setEditMode(!isEditMode) },
+                                    modifier = Modifier.testTag("toggle_edit_mode_button")
+                                ) {
+                                    Icon(
+                                        imageVector = if (isEditMode) Icons.Default.Book else Icons.Default.Edit,
+                                        contentDescription = if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode),
+                                        tint = accentColor
+                                    )
+                                }
                             }
                         }
 
                         // Reading config settings
-                        IconButton(
-                            onClick = { showSettingsSheet = true },
-                            modifier = Modifier.testTag("configure_font_button")
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            tooltip = { PlainTooltip { Text(stringResource(R.string.pref_dialog_title)) } },
+                            state = rememberTooltipState()
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.TextFormat,
-                                contentDescription = stringResource(R.string.pref_dialog_title),
-                                tint = fgColor.copy(alpha = 0.8f)
-                            )
+                            IconButton(
+                                onClick = { showSettingsSheet = true },
+                                modifier = Modifier.testTag("configure_font_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.TextFormat,
+                                    contentDescription = stringResource(R.string.pref_dialog_title),
+                                    tint = fgColor.copy(alpha = 0.8f)
+                                )
+                            }
                         }
 
                         // More Action options
                         if (selectedDoc != null) {
                             var showDropdown by remember { mutableStateOf(false) }
                             Box {
-                                IconButton(onClick = { showDropdown = true }) {
-                                    Icon(
-                                        imageVector = Icons.Default.MoreVert,
-                                        contentDescription = stringResource(R.string.options),
-                                        tint = fgColor.copy(alpha = 0.8f)
-                                    )
+                                TooltipBox(
+                                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                    tooltip = { PlainTooltip { Text(stringResource(R.string.options)) } },
+                                    state = rememberTooltipState()
+                                ) {
+                                    IconButton(onClick = { showDropdown = true }) {
+                                        Icon(
+                                            imageVector = Icons.Default.MoreVert,
+                                            contentDescription = stringResource(R.string.options),
+                                            tint = fgColor.copy(alpha = 0.8f)
+                                        )
+                                    }
                                 }
                                 DropdownMenu(
                                     expanded = showDropdown,
