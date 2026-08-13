@@ -45,3 +45,7 @@
 ## 2024-05-18 - TooltipBox accessibility improvement
 **Learning:** Icon-only buttons lack critical context on desktop/hover interactions. Using Material 3 TooltipBox is the standard accessibility pattern for revealing the contentDescription string resources visually on hover/long-press.
 **Action:** Always wrap `IconButton` components in `TooltipBox` to improve a11y, remembering to include `@OptIn(ExperimentalMaterial3Api::class)` when doing so in Jetpack Compose.
+
+## 2024-05-18 - Added tooltips to icon-only buttons
+**Learning:** Adding `TooltipBox` components for accessibility in Material 3 requires adding the `@OptIn(ExperimentalMaterial3Api::class)` annotation to the parent `@Composable` function. Failure to do so leads to compilation errors. In files with wildcard imports like `import androidx.compose.material3.*`, the annotation itself is sufficient, but in other files, it might be necessary to import `androidx.compose.material3.ExperimentalMaterial3Api`.
+**Action:** Always verify if a Material 3 component being introduced is experimental and requires the `@OptIn` annotation. Test compilation after making such changes.
