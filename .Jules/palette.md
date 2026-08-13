@@ -42,3 +42,6 @@
 ## 2026-08-08 - Added Tooltips to TopAppBar IconButtons
 **Learning:** Found an accessibility improvement in `MainActivity.kt`. Adding tooltips to icon-only buttons on the top app bar using `TooltipBox` enhances the user experience by providing a text description when users long-press the buttons.
 **Action:** Always wrap icon-only buttons with `TooltipBox` in Jetpack Compose to provide textual descriptions for better accessibility and UX.
+## 2024-05-18 - TooltipBox accessibility improvement
+**Learning:** Icon-only buttons lack critical context on desktop/hover interactions. Using Material 3 TooltipBox is the standard accessibility pattern for revealing the contentDescription string resources visually on hover/long-press.
+**Action:** Always wrap `IconButton` components in `TooltipBox` to improve a11y, remembering to include `@OptIn(ExperimentalMaterial3Api::class)` when doing so in Jetpack Compose.
