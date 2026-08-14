@@ -1135,28 +1135,40 @@ fun SidebarContent(
 
                                 // Item secondary commands in sidebar
                                 Row {
-                                    IconButton(
-                                        onClick = { onRename(doc) },
-                                        modifier = Modifier.size(20.dp)
+                                    TooltipBox(
+                                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.rename_note)) } },
+                                        state = rememberTooltipState()
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.DriveFileRenameOutline,
-                                            contentDescription = stringResource(R.string.rename_note),
-                                            tint = fgColor.copy(alpha = 0.3f),
-                                            modifier = Modifier.size(12.dp)
-                                        )
+                                        IconButton(
+                                            onClick = { onRename(doc) },
+                                            modifier = Modifier.size(20.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.DriveFileRenameOutline,
+                                                contentDescription = stringResource(R.string.rename_note),
+                                                tint = fgColor.copy(alpha = 0.3f),
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
                                     }
                                     Spacer(modifier = Modifier.width(10.dp))
-                                    IconButton(
-                                        onClick = { onDelete(doc) },
-                                        modifier = Modifier.size(20.dp)
+                                    TooltipBox(
+                                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.delete_note)) } },
+                                        state = rememberTooltipState()
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = stringResource(R.string.delete_note),
-                                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
-                                            modifier = Modifier.size(12.dp)
-                                        )
+                                        IconButton(
+                                            onClick = { onDelete(doc) },
+                                            modifier = Modifier.size(20.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = stringResource(R.string.delete_note),
+                                                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }

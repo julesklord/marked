@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MarkdownRenderer(
     content: String,
@@ -401,19 +402,25 @@ fun MarkdownRenderer(
                                 )
                             }
                             val copiedMsg = stringResource(R.string.code_copied)
-                            IconButton(
-                                onClick = {
-                                    clipboardManager.setText(AnnotatedString(block.code))
-                                    Toast.makeText(context, copiedMsg, Toast.LENGTH_SHORT).show()
-                                },
-                                modifier = Modifier.size(24.dp)
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                tooltip = { PlainTooltip { Text(stringResource(R.string.copy_code)) } },
+                                state = rememberTooltipState()
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.ContentCopy,
-                                    contentDescription = stringResource(R.string.copy_code),
-                                    tint = accentColor,
-                                    modifier = Modifier.size(14.dp)
-                                )
+                                IconButton(
+                                    onClick = {
+                                        clipboardManager.setText(AnnotatedString(block.code))
+                                        Toast.makeText(context, copiedMsg, Toast.LENGTH_SHORT).show()
+                                    },
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ContentCopy,
+                                        contentDescription = stringResource(R.string.copy_code),
+                                        tint = accentColor,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
                             }
                         }
 
