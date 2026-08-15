@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -221,10 +222,24 @@ fun SidebarContent(
                 Spacer(modifier = Modifier.height(12.dp))
                 if (searchQuery.isNotEmpty()) {
                     androidx.compose.material3.TextButton(onClick = { onSearchChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.clear_search), color = accentColor)
                     }
                 } else {
                     androidx.compose.material3.TextButton(onClick = onCreateNew) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.new_document), color = accentColor)
                     }
                 }

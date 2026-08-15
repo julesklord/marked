@@ -1073,10 +1073,24 @@ fun SidebarContent(
                 Spacer(modifier = Modifier.height(12.dp))
                 if (searchQuery.isNotEmpty()) {
                     androidx.compose.material3.TextButton(onClick = { onSearchChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.clear_search), color = accentColor)
                     }
                 } else {
                     androidx.compose.material3.TextButton(onClick = onCreateNew) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.new_document), color = accentColor)
                     }
                 }

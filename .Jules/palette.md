@@ -49,3 +49,6 @@
 ## 2024-05-18 - Added tooltips to icon-only buttons
 **Learning:** Adding `TooltipBox` components for accessibility in Material 3 requires adding the `@OptIn(ExperimentalMaterial3Api::class)` annotation to the parent `@Composable` function. Failure to do so leads to compilation errors. In files with wildcard imports like `import androidx.compose.material3.*`, the annotation itself is sufficient, but in other files, it might be necessary to import `androidx.compose.material3.ExperimentalMaterial3Api`.
 **Action:** Always verify if a Material 3 component being introduced is experimental and requires the `@OptIn` annotation. Test compilation after making such changes.
+## 2026-08-09 - Icon additions to Empty State TextButtons
+**Learning:** Found a UX opportunity in `SidebarContent.kt` and `MainActivity.kt` where the empty state buttons ("Clear search" and "New document") were plain text buttons. Adding standard Material icons (Clear and Add) next to the text using a RowScope (`Icon` + `Spacer` + `Text`) makes these primary empty state actions much more scannable and visually appealing.
+**Action:** When creating TextButtons for important fallback/empty state actions, include a leading descriptive icon (with `contentDescription = null` to prevent redundant screen reader announcements) to improve visual structure and scannability.
