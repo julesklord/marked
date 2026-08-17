@@ -55,6 +55,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.animation.Crossfade
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -245,9 +249,11 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                     actions = {
                         // Edit / Read Toggle Switch
                         if (selectedDoc != null) {
+                            val toggleMsg = if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode)
+                            @OptIn(ExperimentalMaterial3Api::class)
                             TooltipBox(
                                 positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                                tooltip = { PlainTooltip { Text(if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode)) } },
+                                tooltip = { PlainTooltip { Text(toggleMsg) } },
                                 state = rememberTooltipState()
                             ) {
                                 IconButton(
@@ -256,7 +262,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 ) {
                                     Icon(
                                         imageVector = if (isEditMode) Icons.Default.Book else Icons.Default.Edit,
-                                        contentDescription = if (isEditMode) stringResource(R.string.read_mode) else stringResource(R.string.edit_mode),
+                                        contentDescription = toggleMsg,
                                         tint = accentColor
                                     )
                                 }
@@ -264,6 +270,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         }
 
                         // Reading config settings
+                        @OptIn(ExperimentalMaterial3Api::class)
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                             tooltip = { PlainTooltip { Text(stringResource(R.string.pref_dialog_title)) } },
