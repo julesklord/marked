@@ -25,10 +25,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.rememberTooltipState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.icons.automirrored.filled.FactCheck
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 import androidx.compose.material.icons.automirrored.filled.MenuBook
@@ -36,10 +34,8 @@ import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -61,7 +57,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.animation.Crossfade
 import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.ui.text.style.TextOverflow
@@ -748,12 +743,18 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             placeholder = { Text(stringResource(R.string.create_dialog_placeholder)) },
                             trailingIcon = {
                                 if (inputTitle.isNotEmpty()) {
-                                    IconButton(onClick = { inputTitle = "" }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Clear,
-                                            contentDescription = stringResource(R.string.clear_input),
-                                            tint = fgColor.copy(alpha = 0.6f)
-                                        )
+                                    TooltipBox(
+                                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.clear_input)) } },
+                                        state = rememberTooltipState()
+                                    ) {
+                                        IconButton(onClick = { inputTitle = "" }) {
+                                            Icon(
+                                                imageVector = Icons.Default.Clear,
+                                                contentDescription = stringResource(R.string.clear_input),
+                                                tint = fgColor.copy(alpha = 0.6f)
+                                            )
+                                        }
                                     }
                                 }
                             },
@@ -825,12 +826,18 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             onValueChange = { inputTitle = it },
                             trailingIcon = {
                                 if (inputTitle.isNotEmpty()) {
-                                    IconButton(onClick = { inputTitle = "" }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Clear,
-                                            contentDescription = stringResource(R.string.clear_input),
-                                            tint = fgColor.copy(alpha = 0.6f)
-                                        )
+                                    TooltipBox(
+                                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.clear_input)) } },
+                                        state = rememberTooltipState()
+                                    ) {
+                                        IconButton(onClick = { inputTitle = "" }) {
+                                            Icon(
+                                                imageVector = Icons.Default.Clear,
+                                                contentDescription = stringResource(R.string.clear_input),
+                                                tint = fgColor.copy(alpha = 0.6f)
+                                            )
+                                        }
                                     }
                                 }
                             },
@@ -938,7 +945,6 @@ fun SidebarContent(
     val fgColor = Color(theme.hexForeground)
     val context = LocalContext.current
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
-    val context = LocalContext.current
 
     // Filter documents dynamically
     val filteredDocs = remember(documents, searchQuery) {

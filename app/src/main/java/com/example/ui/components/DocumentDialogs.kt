@@ -13,6 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,6 +41,7 @@ import com.example.R
 import com.example.data.MarkdownDocument
 import com.example.ui.markdown.ReaderTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateDocumentDialog(
     theme: ReaderTheme,
@@ -66,12 +72,18 @@ fun CreateDocumentDialog(
                     placeholder = { Text(stringResource(R.string.create_dialog_placeholder)) },
                     trailingIcon = {
                         if (inputTitle.isNotEmpty()) {
-                            IconButton(onClick = { inputTitle = "" }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = stringResource(R.string.clear_input),
-                                    tint = fgColor.copy(alpha = 0.6f)
-                                )
+                                    TooltipBox(
+                                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.clear_input)) } },
+                                        state = rememberTooltipState()
+                                    ) {
+                                        IconButton(onClick = { inputTitle = "" }) {
+                                            Icon(
+                                                imageVector = Icons.Default.Clear,
+                                                contentDescription = stringResource(R.string.clear_input),
+                                                tint = fgColor.copy(alpha = 0.6f)
+                                            )
+                                        }
                             }
                         }
                     },
@@ -119,6 +131,7 @@ fun CreateDocumentDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RenameDocumentDialog(
     document: MarkdownDocument,
@@ -143,12 +156,18 @@ fun RenameDocumentDialog(
                     onValueChange = { inputTitle = it },
                     trailingIcon = {
                         if (inputTitle.isNotEmpty()) {
-                            IconButton(onClick = { inputTitle = "" }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = stringResource(R.string.clear_input),
-                                    tint = fgColor.copy(alpha = 0.6f)
-                                )
+                                    TooltipBox(
+                                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.clear_input)) } },
+                                        state = rememberTooltipState()
+                                    ) {
+                                        IconButton(onClick = { inputTitle = "" }) {
+                                            Icon(
+                                                imageVector = Icons.Default.Clear,
+                                                contentDescription = stringResource(R.string.clear_input),
+                                                tint = fgColor.copy(alpha = 0.6f)
+                                            )
+                                        }
                             }
                         }
                     },
