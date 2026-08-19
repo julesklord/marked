@@ -46,3 +46,6 @@
 ## 2026-08-08 - Added Tooltips to Clear Input IconButtons
 **Learning:** Found an accessibility improvement in `MainActivity.kt` and `DocumentDialogs.kt`. The "Clear input" icon buttons inside text fields (like when creating or renaming notes) had a `contentDescription` but lacked a visual tooltip. Wrapping these `IconButton`s in a `TooltipBox` ensures that long-pressing the button reveals its function ("Clear input") visually, matching its accessibility description.
 **Action:** Always wrap icon-only action buttons (like clear inputs or format options) with `TooltipBox` in Jetpack Compose to provide textual descriptions for better accessibility and UX. Verify identical changes across duplicated composable functions if they exist.
+## 2026-08-19 - Replaced clickable with selectable for RadioButton roles
+**Learning:** In Jetpack Compose, using `.clickable` for mutually exclusive selections (like picking a theme, font size, or line spacing) does not communicate to screen readers that these are part of a radio group or whether they are currently selected. This degrades the accessibility experience.
+**Action:** Always replace `.clickable` with `.selectable(selected = selected, onClick = { ... }, role = Role.RadioButton)` for mutually exclusive options to provide proper screen reader semantics and accurately report the selected state.
