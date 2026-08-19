@@ -3,7 +3,7 @@ package com.example.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -95,9 +96,11 @@ fun ReadingPreferencesDialog(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                .clickable {
-                                    onUpdatePreferences { it.copy(selectedFont = font) }
-                                }
+                                .selectable(
+                                    selected = selected,
+                                    onClick = { onUpdatePreferences { it.copy(selectedFont = font) } },
+                                    role = Role.RadioButton
+                                )
                                 .border(
                                     BorderStroke(
                                         1.dp,
@@ -175,9 +178,11 @@ fun ReadingPreferencesDialog(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                .clickable {
-                                    onUpdatePreferences { it.copy(lineSpacingMultiplier = multiplier) }
-                                }
+                                .selectable(
+                                    selected = selected,
+                                    onClick = { onUpdatePreferences { it.copy(lineSpacingMultiplier = multiplier) } },
+                                    role = Role.RadioButton
+                                )
                                 .border(
                                     BorderStroke(
                                         1.dp,
@@ -216,9 +221,11 @@ fun ReadingPreferencesDialog(
                         val selected = preferences.selectedTheme == rt
                         Column(
                             modifier = Modifier
-                                .clickable {
-                                    onUpdatePreferences { it.copy(selectedTheme = rt) }
-                                },
+                                .selectable(
+                                    selected = selected,
+                                    onClick = { onUpdatePreferences { it.copy(selectedTheme = rt) } },
+                                    role = Role.RadioButton
+                                ),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Box(
