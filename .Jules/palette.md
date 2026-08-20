@@ -46,3 +46,6 @@
 ## 2026-08-08 - Added Tooltips to Clear Input IconButtons
 **Learning:** Found an accessibility improvement in `MainActivity.kt` and `DocumentDialogs.kt`. The "Clear input" icon buttons inside text fields (like when creating or renaming notes) had a `contentDescription` but lacked a visual tooltip. Wrapping these `IconButton`s in a `TooltipBox` ensures that long-pressing the button reveals its function ("Clear input") visually, matching its accessibility description.
 **Action:** Always wrap icon-only action buttons (like clear inputs or format options) with `TooltipBox` in Jetpack Compose to provide textual descriptions for better accessibility and UX. Verify identical changes across duplicated composable functions if they exist.
+## 2026-11-20 - Redundant Accessibility Labels for Empty State Icons
+**Learning:** Found an accessibility issue where an empty state `Icon` and its adjacent `Text` label in `MainActivity.kt` were both providing the same meaning, causing screen readers to read redundant information.
+**Action:** When creating empty states with an `Icon` and `Text`, and the text acts as a visible label explaining the state, set the `Icon`'s `contentDescription` to `null` to mark it as decorative. This prevents redundant screen reader announcements.

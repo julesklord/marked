@@ -11,6 +11,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -408,7 +410,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.Notes,
-                                    contentDescription = stringResource(R.string.empty_notes_icon),
+                                    contentDescription = null, // decorative in empty state with text label
                                     tint = accentColor.copy(alpha = 0.3f),
                                     modifier = Modifier.size(96.dp)
                                 )
@@ -555,9 +557,11 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         .weight(1f)
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                        .clickable {
-                                            viewModel.updatePreferences { it.copy(selectedFont = font) }
-                                        }
+                                        .selectable(
+                                            selected = selected,
+                                            role = Role.RadioButton,
+                                            onClick = { viewModel.updatePreferences { it.copy(selectedFont = font) } }
+                                        )
                                         .border(
                                             BorderStroke(
                                                 1.dp,
@@ -633,9 +637,11 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         .weight(1f)
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                        .clickable {
-                                            viewModel.updatePreferences { it.copy(lineSpacingMultiplier = pair.second) }
-                                        }
+                                        .selectable(
+                                            selected = selected,
+                                            role = Role.RadioButton,
+                                            onClick = { viewModel.updatePreferences { it.copy(lineSpacingMultiplier = pair.second) } }
+                                        )
                                         .border(
                                             BorderStroke(
                                                 1.dp,
@@ -675,9 +681,11 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 Column(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clickable {
-                                            viewModel.updatePreferences { it.copy(selectedTheme = rt) }
-                                        },
+                                        .selectable(
+                                            selected = selected,
+                                            role = Role.RadioButton,
+                                            onClick = { viewModel.updatePreferences { it.copy(selectedTheme = rt) } }
+                                        ),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Box(
