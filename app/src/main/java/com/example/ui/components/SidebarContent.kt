@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Clear
@@ -213,6 +214,13 @@ fun SidebarContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                Icon(
+                    imageVector = if (searchQuery.isNotEmpty()) Icons.Default.Search else Icons.AutoMirrored.Filled.Notes,
+                    contentDescription = null,
+                    tint = fgColor.copy(alpha = 0.3f),
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.words_not_found),
                     fontSize = 12.sp,
