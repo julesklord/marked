@@ -1083,6 +1083,13 @@ fun SidebarContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                Icon(
+                    imageVector = if (searchQuery.isNotEmpty()) Icons.Default.Search else Icons.AutoMirrored.Filled.Notes,
+                    contentDescription = null,
+                    tint = fgColor.copy(alpha = 0.3f),
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.words_not_found),
                     fontSize = 12.sp,
