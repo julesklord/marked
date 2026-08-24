@@ -11,6 +11,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -555,7 +557,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         .weight(1f)
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                        .clickable {
+                                        .selectable(selected = selected, role = Role.RadioButton) {
                                             viewModel.updatePreferences { it.copy(selectedFont = font) }
                                         }
                                         .border(
@@ -633,7 +635,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                         .weight(1f)
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                        .clickable {
+                                        .selectable(selected = selected, role = Role.RadioButton) {
                                             viewModel.updatePreferences { it.copy(lineSpacingMultiplier = pair.second) }
                                         }
                                         .border(
@@ -675,7 +677,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 Column(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clickable {
+                                        .selectable(selected = selected, role = Role.RadioButton) {
                                             viewModel.updatePreferences { it.copy(selectedTheme = rt) }
                                         },
                                     horizontalAlignment = Alignment.CenterHorizontally
