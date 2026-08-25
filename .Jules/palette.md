@@ -49,3 +49,6 @@
 ## 2024-11-23 - Empty State Visual Polish Pattern
 **Learning:** Found a visual polish opportunity in the sidebar document list (`SidebarContent.kt` and `MainActivity.kt`). The empty states ("No notes found") previously lacked visual flair. Adding a contextual, muted `Icon` (like Search for no search results, or Notes for an empty database) above the text message greatly improves the aesthetics and provides a stronger visual anchor for users encountering dead ends.
 **Action:** When designing empty states for lists or search results in Jetpack Compose, always consider adding a muted, contextual `Icon` above the descriptive text to create a more polished and professional visual experience.
+## 2026-08-25 - Use Selectable for Mutually Exclusive Options
+**Learning:** Replaced `.clickable` with `.selectable` and `Role.RadioButton` for preference options like font, line spacing, and theme. This provides better accessibility semantics for screen readers, correctly announcing these items as radio buttons.
+**Action:** Always use `.selectable` with `Role.RadioButton` instead of `.clickable` for mutually exclusive selection options in Jetpack Compose to ensure correct assistive technology behavior.
