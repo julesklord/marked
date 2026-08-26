@@ -28,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -95,7 +97,7 @@ fun ReadingPreferencesDialog(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                .clickable {
+                                .selectable(selected = selected, role = Role.RadioButton) {
                                     onUpdatePreferences { it.copy(selectedFont = font) }
                                 }
                                 .border(
@@ -175,7 +177,7 @@ fun ReadingPreferencesDialog(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(if (selected) accentColor else Color(theme.hexCodeBg))
-                                .clickable {
+                                .selectable(selected = selected, role = Role.RadioButton) {
                                     onUpdatePreferences { it.copy(lineSpacingMultiplier = multiplier) }
                                 }
                                 .border(
@@ -216,7 +218,7 @@ fun ReadingPreferencesDialog(
                         val selected = preferences.selectedTheme == rt
                         Column(
                             modifier = Modifier
-                                .clickable {
+                                .selectable(selected = selected, role = Role.RadioButton) {
                                     onUpdatePreferences { it.copy(selectedTheme = rt) }
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
