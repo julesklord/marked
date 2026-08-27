@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -87,15 +88,26 @@ fun MarkdownRenderer(
                     .padding(vertical = 48.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = stringResource(R.string.empty_document_msg),
-                    style = TextStyle(
-                        fontFamily = preferences.selectedFont.fontFamily,
-                        fontSize = preferences.fontSizeSp.sp,
-                        color = fgColor.copy(alpha = 0.5f),
-                        fontStyle = FontStyle.Italic
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                        contentDescription = null, // decorative in empty state
+                        tint = fgColor.copy(alpha = 0.3f),
+                        modifier = Modifier.size(32.dp)
                     )
-                )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.empty_document_msg),
+                        style = TextStyle(
+                            fontFamily = preferences.selectedFont.fontFamily,
+                            fontSize = preferences.fontSizeSp.sp,
+                            color = fgColor.copy(alpha = 0.5f),
+                            fontStyle = FontStyle.Italic
+                        )
+                    )
+                }
             }
         }
 
