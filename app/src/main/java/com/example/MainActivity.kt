@@ -410,7 +410,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.Notes,
-                                    contentDescription = stringResource(R.string.empty_notes_icon),
+                                    contentDescription = null,
                                     tint = accentColor.copy(alpha = 0.3f),
                                     modifier = Modifier.size(96.dp)
                                 )
