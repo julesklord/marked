@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -88,6 +89,7 @@ fun ReadingPreferencesDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .selectableGroup()
                         .padding(bottom = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -161,6 +163,7 @@ fun ReadingPreferencesDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .selectableGroup()
                         .padding(bottom = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -211,7 +214,9 @@ fun ReadingPreferencesDialog(
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectableGroup(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     for (rt in ReaderTheme.entries) {

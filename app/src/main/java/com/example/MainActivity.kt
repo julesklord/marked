@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.ui.semantics.Role
@@ -547,6 +548,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .selectableGroup()
                                 .padding(bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
@@ -621,6 +623,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .selectableGroup()
                                 .padding(bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
@@ -669,7 +672,9 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectableGroup(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             ReaderTheme.entries.forEach { rt ->
