@@ -53,3 +53,7 @@
 ## 2026-08-11 - Jetpack Compose Radio Button Accessibility Pattern
 **Learning:** Found an accessibility opportunity in `ReadingPreferencesDialog.kt` and `MainActivity.kt`. Mutually exclusive selectable options (like Theme or Typography settings) were using `Modifier.clickable`. Replacing this with `Modifier.selectable(selected = ..., role = Role.RadioButton)` ensures that screen readers like TalkBack accurately announce these options as "Radio Buttons" and correctly read their "Selected" or "Not Selected" states.
 **Action:** When building custom list items or boxes that act as mutually exclusive options in Jetpack Compose, always use the `selectable` modifier with `Role.RadioButton` instead of `clickable` to provide correct accessibility semantics.
+
+## 2026-08-11 - Jetpack Compose SelectableGroup Accessibility Pattern
+**Learning:** Found an accessibility opportunity in `ReadingPreferencesDialog.kt` and `MainActivity.kt`. After converting mutually exclusive list items to use the `selectable` modifier with `Role.RadioButton`, their parent container (`Row`) lacked grouping semantics. Adding `.selectableGroup()` to the parent container ensures that screen readers like TalkBack accurately announce these items as a set (e.g. "Item 1 of 3").
+**Action:** When building custom list items or boxes that act as mutually exclusive options in Jetpack Compose, always apply `Modifier.selectableGroup()` to their parent container to provide accurate grouping semantics for assistive technologies.
