@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -88,7 +89,8 @@ fun ReadingPreferencesDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        .padding(bottom = 16.dp)
+                        .selectableGroup(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     for (font in ReaderFontFamily.entries) {
@@ -161,7 +163,8 @@ fun ReadingPreferencesDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        .padding(bottom = 16.dp)
+                        .selectableGroup(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     val options = listOf(
@@ -211,7 +214,9 @@ fun ReadingPreferencesDialog(
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectableGroup(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     for (rt in ReaderTheme.entries) {
