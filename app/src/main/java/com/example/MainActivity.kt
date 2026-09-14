@@ -17,6 +17,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -547,7 +548,8 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 16.dp),
+                                .padding(bottom = 16.dp)
+                                .selectableGroup(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             ReaderFontFamily.entries.forEach { font ->
@@ -621,7 +623,8 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 16.dp),
+                                .padding(bottom = 16.dp)
+                                .selectableGroup(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             listOf(
@@ -669,7 +672,9 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectableGroup(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             ReaderTheme.entries.forEach { rt ->
