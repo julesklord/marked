@@ -53,3 +53,7 @@
 ## 2026-08-11 - Jetpack Compose Radio Button Accessibility Pattern
 **Learning:** Found an accessibility opportunity in `ReadingPreferencesDialog.kt` and `MainActivity.kt`. Mutually exclusive selectable options (like Theme or Typography settings) were using `Modifier.clickable`. Replacing this with `Modifier.selectable(selected = ..., role = Role.RadioButton)` ensures that screen readers like TalkBack accurately announce these options as "Radio Buttons" and correctly read their "Selected" or "Not Selected" states.
 **Action:** When building custom list items or boxes that act as mutually exclusive options in Jetpack Compose, always use the `selectable` modifier with `Role.RadioButton` instead of `clickable` to provide correct accessibility semantics.
+
+## 2026-08-14 - Empty State Decorative Icon Accessibility
+**Learning:** Found an accessibility opportunity in `MainActivity.kt`. A large `Icon` representing the empty state ("Notes" icon) had a `contentDescription` attached, but it was immediately followed by descriptive text ("No document selected"). This caused screen readers to announce redundant information ("Empty notes", "No document selected"). Setting the icon's `contentDescription` to `null` makes it a decorative element, providing a much cleaner experience for screen reader users.
+**Action:** When adding large decorative icons in empty states or alongside descriptive labels, always set the `contentDescription` to `null` to avoid screen reader redundancy and treat them purely as visual polish.
