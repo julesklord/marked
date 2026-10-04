@@ -411,7 +411,7 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.Notes,
-                                    contentDescription = stringResource(R.string.empty_notes_icon),
+                                    contentDescription = null, // decorative in empty state
                                     tint = accentColor.copy(alpha = 0.3f),
                                     modifier = Modifier.size(96.dp)
                                 )
@@ -772,7 +772,10 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.Sentences,
+                                imeAction = ImeAction.Done
+                            ),
                             keyboardActions = KeyboardActions(onDone = {
                                 if (isInputValid) {
                                     viewModel.createNewDocument(inputTitle.trim())
@@ -855,7 +858,10 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.Sentences,
+                                imeAction = ImeAction.Done
+                            ),
                             keyboardActions = KeyboardActions(onDone = {
                                 if (isInputValid) {
                                     viewModel.renameDocument(docToRename.id, inputTitle.trim())
