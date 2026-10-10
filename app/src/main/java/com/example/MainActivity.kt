@@ -772,7 +772,10 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done,
+                                capitalization = KeyboardCapitalization.Sentences
+                            ),
                             keyboardActions = KeyboardActions(onDone = {
                                 if (isInputValid) {
                                     viewModel.createNewDocument(inputTitle.trim())
@@ -855,7 +858,10 @@ fun MainAppContent(viewModel: MarkdownViewModel) {
                                 focusedBorderColor = accentColor,
                                 unfocusedBorderColor = fgColor.copy(alpha = 0.3f)
                             ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done,
+                                capitalization = KeyboardCapitalization.Sentences
+                            ),
                             keyboardActions = KeyboardActions(onDone = {
                                 if (isInputValid) {
                                     viewModel.renameDocument(docToRename.id, inputTitle.trim())
